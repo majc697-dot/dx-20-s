@@ -1,0 +1,3695 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DX-20S 便携防护预警终端 · 界面模拟器</title>
+<style>
+  /* 设备使用 HarmonyOS Sans SC 字库（HMOS / HMOS_28 / UI20） */
+  @font-face{
+    font-family:'HarmonyOS Sans SC';
+    src:url('https://cdn.jsdelivr.net/gh/CKevens/Web-Woff2/HarmonyOS_Sans_SC_Medium.woff2') format('woff2'),
+        url('https://cdn.jsdelivr.net/gh/irozhi/HarmonyOS-Sans/HarmonyOS_Sans_SC/HarmonyOS_Sans_SC_Medium.woff2') format('woff2');
+    font-weight:400 700;
+    font-display:swap;
+  }
+
+  :root{
+    --app-bg:#14161c;
+    --panel:#1c1f27;
+    --panel-2:#232732;
+    --line:#2f3542;
+    --txt:#e6e9ef;
+    --txt-dim:#9aa2b1;
+    --accent:#4f9eff;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box}
+
+  body{
+    background:var(--app-bg);
+    color:var(--txt);
+    font-family:'HarmonyOS Sans SC','PingFang SC','Microsoft YaHei',system-ui,sans-serif;
+    padding:28px 24px 60px;
+    min-height:100vh;
+  }
+
+  .wrap{max-width:1320px;margin:0 auto}
+
+  .topbar{
+    display:flex;align-items:flex-end;justify-content:space-between;
+    gap:16px;flex-wrap:wrap;margin-bottom:22px;
+    padding-bottom:16px;border-bottom:1px solid var(--line);
+  }
+  .topbar h1{font-size:1.5rem;font-weight:600;letter-spacing:.3px}
+  .topbar .sub{font-size:.82rem;color:var(--txt-dim);margin-top:5px}
+  .badge{
+    font-size:.72rem;color:var(--txt-dim);
+    border:1px solid var(--line);border-radius:999px;padding:5px 12px;
+    background:var(--panel);
+  }
+
+  .layout{display:flex;gap:26px;align-items:flex-start;flex-wrap:wrap}
+
+  /* ---------------- 设备外壳 ---------------- */
+  .device-col{flex:1 1 700px;min-width:620px}
+
+  .shell{
+    position:relative;
+    background:linear-gradient(160deg,#3a3f4a 0%,#22262e 42%,#191c22 100%);
+    border-radius:26px;
+    padding:26px 28px 30px;
+    box-shadow:
+      0 30px 60px -18px rgba(0,0,0,.75),
+      inset 0 1px 0 rgba(255,255,255,.10),
+      inset 0 -2px 0 rgba(0,0,0,.45);
+    border:1px solid #40454f;
+  }
+
+  /* 外壳磨砂纹理 */
+  .shell::before{
+    content:"";position:absolute;inset:0;border-radius:26px;pointer-events:none;
+    background-image:radial-gradient(rgba(255,255,255,.035) 1px, transparent 1px);
+    background-size:4px 4px;opacity:.6;
+  }
+
+  .shell-top{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:16px;position:relative;z-index:1;
+  }
+  .brand{display:flex;align-items:center;gap:11px}
+  .brand .logo{
+    width:30px;height:30px;border-radius:8px;
+    background:linear-gradient(140deg,#4f9eff,#2b6bd8);
+    display:flex;align-items:center;justify-content:center;
+    font-size:14px;font-weight:700;color:#fff;
+    box-shadow:0 3px 10px rgba(79,158,255,.4);
+  }
+  .brand .name{font-size:1.02rem;font-weight:600;letter-spacing:.4px}
+  .brand .model{font-size:.72rem;color:#8f97a6;letter-spacing:1.2px}
+
+  .antenna{
+    width:13px;height:52px;border-radius:7px;
+    background:linear-gradient(180deg,#5a6070,#2a2e38);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.18);
+    align-self:flex-start;
+  }
+
+  .shell-body{
+    display:flex;gap:24px;align-items:flex-start;
+    position:relative;z-index:1;
+  }
+
+  /* 屏幕凹槽 */
+  .screen-bezel{
+    background:#0b0c10;
+    border-radius:14px;
+    padding:12px;
+    box-shadow:
+      inset 0 3px 10px rgba(0,0,0,.85),
+      0 1px 0 rgba(255,255,255,.08);
+    border:1px solid #2b2f38;
+  }
+  #screen{
+    display:block;
+    width:640px;height:480px;
+    border-radius:4px;
+    image-rendering:pixelated;
+    background:#000;
+  }
+  .screen-meta{
+    display:flex;justify-content:space-between;
+    font-size:.72rem;color:var(--txt-dim);margin-top:11px;padding:0 3px;
+  }
+
+  /* 状态指示灯 */
+  .leds{
+    display:flex;gap:9px;margin-top:10px;padding:0 3px;align-items:center;
+    font-size:.7rem;color:var(--txt-dim);
+  }
+  .led{width:8px;height:8px;border-radius:50%}
+  .led.on{box-shadow:0 0 7px currentColor}
+
+  /* 按键区 */
+  .keypad{
+    flex:1;display:flex;flex-direction:column;gap:13px;padding-top:6px;min-width:150px;
+  }
+  .key{
+    border:none;cursor:pointer;
+    background:linear-gradient(180deg,#4b515e,#2c313b);
+    color:#e8ecf3;
+    border-radius:11px;
+    padding:12px 14px;
+    text-align:left;
+    font-family:inherit;
+    box-shadow:
+      0 4px 0 #171a20,
+      0 7px 14px rgba(0,0,0,.5),
+      inset 0 1px 0 rgba(255,255,255,.14);
+    transition:transform .05s, box-shadow .05s;
+    display:flex;align-items:center;gap:10px;
+  }
+  .key .cap{
+    width:26px;height:26px;border-radius:7px;flex:0 0 auto;
+    background:rgba(0,0,0,.28);
+    display:flex;align-items:center;justify-content:center;
+    font-size:.72rem;font-weight:700;color:#aab3c2;
+  }
+  .key .lbl{font-size:.8rem;font-weight:500;line-height:1.25}
+  .key .hint{font-size:.66rem;color:#98a1b0;display:block;margin-top:2px}
+  .key:active{
+    transform:translateY(3px);
+    box-shadow:0 1px 0 #171a20, 0 3px 7px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.10);
+  }
+  .keyrow{display:flex;gap:11px}
+  .keyrow .key{flex:1}
+
+  .dev-foot{
+    display:flex;justify-content:space-between;align-items:center;
+    margin-top:18px;font-size:.7rem;color:#7d8492;
+  }
+  .spk{
+    display:flex;gap:4px;align-items:flex-end;height:14px;
+  }
+  .spk i{display:block;width:3px;background:#4a505c;border-radius:2px}
+
+  /* ---------------- 控制面板 ---------------- */
+  .panel-col{flex:0 0 400px;min-width:340px}
+  @media(max-width:1180px){
+    .device-col{flex:1 1 100%;min-width:0}
+    .panel-col{flex:1 1 100%}
+    #screen{width:100%;height:auto;aspect-ratio:4/3}
+  }
+
+  .card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:18px 18px 20px;
+    margin-bottom:16px;
+  }
+  .card h2{
+    font-size:.86rem;font-weight:600;letter-spacing:.5px;
+    margin-bottom:14px;color:#cfd6e2;
+    display:flex;align-items:center;gap:8px;
+  }
+  .card h2::before{
+    content:"";width:3px;height:14px;border-radius:2px;background:var(--accent);
+  }
+
+  .field{margin-bottom:12px}
+  .field label{
+    display:block;font-size:.73rem;color:var(--txt-dim);
+    margin-bottom:5px;letter-spacing:.3px;
+  }
+  .field input,.field select{
+    width:100%;background:var(--panel-2);
+    border:1px solid var(--line);border-radius:8px;
+    color:var(--txt);padding:8px 10px;font-size:.82rem;
+    font-family:inherit;
+  }
+  .field input:focus,.field select:focus{outline:none;border-color:var(--accent)}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+
+  .btn{
+    width:100%;cursor:pointer;
+    background:linear-gradient(180deg,#3d7fd8,#2a5cb0);
+    color:#fff;border:none;border-radius:9px;
+    padding:10px;font-size:.82rem;font-weight:600;
+    font-family:inherit;
+    box-shadow:0 3px 0 #1d447f;
+    transition:transform .05s, box-shadow .05s;
+  }
+  .btn:active{transform:translateY(2px);box-shadow:0 1px 0 #1d447f}
+  .btn.ghost{
+    background:var(--panel-2);color:var(--txt);
+    box-shadow:0 3px 0 #14171d;border:1px solid var(--line);
+  }
+  .btnrow{display:flex;gap:10px}
+
+  .sbtn{
+    cursor:pointer;text-align:left;
+    background:var(--panel-2);color:var(--txt);
+    border:1px solid var(--line);border-radius:8px;
+    padding:8px 10px;font-size:.76rem;font-family:inherit;
+    transition:border-color .12s,color .12s;
+  }
+  .sbtn:hover{border-color:var(--accent);color:var(--accent)}
+
+  .toggles{display:flex;flex-direction:column;gap:9px}
+  .tg{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:10px;font-size:.78rem;
+    background:var(--panel-2);border:1px solid var(--line);
+    border-radius:9px;padding:9px 11px;
+  }
+  .tg .v{font-weight:600;font-variant-numeric:tabular-nums}
+  .sw{
+    width:40px;height:22px;border-radius:999px;flex:0 0 auto;
+    background:#3a4049;position:relative;cursor:pointer;
+    border:1px solid var(--line);transition:background .15s;
+  }
+  .sw::after{
+    content:"";position:absolute;top:2px;left:2px;
+    width:16px;height:16px;border-radius:50%;
+    background:#9aa2b1;transition:transform .15s, background .15s;
+  }
+  .sw.on{background:#1f6f3d}
+  .sw.on::after{transform:translateX(18px);background:#fff}
+
+  table.jump{width:100%;border-collapse:collapse;font-size:.76rem}
+  table.jump td{padding:4px 0;vertical-align:top}
+  table.jump td.k{color:var(--txt-dim);width:74px;white-space:nowrap}
+  table.jump button{
+    background:none;border:none;color:var(--accent);
+    cursor:pointer;font-family:inherit;font-size:.76rem;padding:0;text-align:left;
+  }
+  table.jump button:hover{text-decoration:underline}
+
+  .hintline{
+    font-size:.72rem;color:var(--txt-dim);line-height:1.6;
+  }
+  code{background:var(--panel-2);padding:1px 5px;border-radius:4px;font-size:.72rem}
+
+  .toast{
+    position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(20px);
+    background:#2a5cb0;color:#fff;padding:11px 20px;border-radius:10px;
+    font-size:.82rem;opacity:0;pointer-events:none;transition:all .25s;z-index:99;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* 纯净截图模式：?shot=1 时只输出屏幕画布，用于批量生成说明书配图 */
+  body.shot{padding:0;background:#000}
+  body.shot .topbar,body.shot .side,body.shot .screen-meta,body.shot .leds,
+  body.shot .shell-top,body.shot .keypad,body.shot .toast{display:none}
+  body.shot .layout{display:block;gap:0}
+  body.shot .device-col{flex:none;min-width:0}
+  body.shot .shell{padding:0;border:none;border-radius:0;box-shadow:none;background:#000}
+  body.shot .shell::before{display:none}
+  body.shot .screen-bezel{padding:0;border:none;border-radius:0;box-shadow:none;background:#000}
+  body.shot #screen{width:640px;height:480px;border-radius:0}
+
+  /* ==================================================================
+   * 场景模拟 + 真实设备外壳（2026-10-28 新增）
+   * ================================================================== */
+  .wrap{max-width:1520px}
+
+  /* ---------- 顶栏控件 ---------- */
+  .topctl{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .seg{display:inline-flex;background:var(--panel-2);border:1px solid var(--line);border-radius:11px;overflow:hidden}
+  .seg button{
+    appearance:none;border:0;background:transparent;color:var(--txt-dim);
+    font:inherit;font-size:.79rem;padding:7px 15px;cursor:pointer;transition:.18s;white-space:nowrap;
+  }
+  .seg button + button{border-left:1px solid var(--line)}
+  .seg button.on{background:linear-gradient(140deg,#4f9eff,#2b6bd8);color:#fff;font-weight:600}
+  .seg button:hover:not(.on){background:#2b3040;color:var(--txt)}
+  .tgl{
+    display:inline-flex;align-items:center;gap:8px;font-size:.79rem;color:var(--txt-dim);
+    background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:6px 13px;cursor:pointer;user-select:none;
+  }
+  .tgl .dot{width:9px;height:9px;border-radius:50%;background:#4ade80;box-shadow:0 0 9px #4ade8066;transition:.2s}
+  .tgl.off .dot{background:#6b7280;box-shadow:none}
+  .clock{
+    font-size:.79rem;color:var(--txt-dim);font-variant-numeric:tabular-nums;
+    background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:6px 13px;white-space:nowrap;
+  }
+  .clock b{color:var(--txt);font-weight:600}
+
+  /* ---------- 双栏布局：场景 | 设备 ---------- */
+  .layout{display:grid;grid-template-columns:minmax(0,1fr) 476px;gap:22px;align-items:start}
+  .device-col{min-width:0}
+  @media (max-width:1240px){ .layout{grid-template-columns:1fr} }
+
+  /* ---------- 场景面板 ---------- */
+  .world-wrap{
+    position:relative;background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden;
+    box-shadow:0 18px 40px -22px rgba(0,0,0,.8);
+  }
+  #world{display:block;width:100%;height:auto;background:#0e1116;touch-action:none;cursor:grab}
+  #world.grabbing{cursor:grabbing}
+  #world.on-device{cursor:move}
+  .world-bar{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+    padding:9px 14px;border-bottom:1px solid var(--line);background:#171a21;
+  }
+  .world-bar .ttl{font-size:.83rem;font-weight:600;letter-spacing:.3px}
+  .world-bar .ttl span{color:var(--txt-dim);font-weight:400;margin-left:8px;font-size:.75rem}
+  .world-bar .tools{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+  .mini{
+    appearance:none;border:1px solid var(--line);background:#20242e;color:var(--txt-dim);
+    font:inherit;font-size:.74rem;padding:5px 11px;border-radius:8px;cursor:pointer;transition:.16s;
+  }
+  .mini:hover{background:#2a3040;color:var(--txt);border-color:#3d4557}
+  .mini.on{background:linear-gradient(140deg,#4f9eff,#2b6bd8);border-color:#4f9eff;color:#fff}
+
+  .hud{
+    position:absolute;left:14px;top:64px;display:flex;flex-direction:column;gap:8px;pointer-events:none;
+  }
+  .hud > *{pointer-events:auto}
+  .hudcard{
+    background:rgba(16,19,25,.86);border:1px solid rgba(255,255,255,.09);border-radius:11px;
+    padding:9px 12px;backdrop-filter:blur(8px);font-size:.74rem;line-height:1.65;color:var(--txt-dim);
+    box-shadow:0 8px 22px -12px rgba(0,0,0,.9);
+  }
+  .hudcard b{color:var(--txt)}
+  .hudcard .row{display:flex;justify-content:space-between;gap:16px}
+  .hudcard .row span:last-child{color:var(--txt);font-variant-numeric:tabular-nums}
+  .legend{
+    position:absolute;right:14px;bottom:122px;background:rgba(16,19,25,.86);border:1px solid rgba(255,255,255,.09);
+    border-radius:11px;padding:9px 12px;font-size:.72rem;color:var(--txt-dim);backdrop-filter:blur(8px);
+  }
+  .legend div{display:flex;align-items:center;gap:8px;line-height:1.9}
+  .legend i{width:16px;height:3px;border-radius:2px;display:inline-block}
+  .legend i.dotm{border-radius:50%;width:9px;height:9px}
+
+  /* 滑杆 */
+  .slider{display:flex;align-items:center;gap:9px;font-size:.73rem;color:var(--txt-dim)}
+  .slider input[type=range]{width:118px;accent-color:#4f9eff}
+  .slider b{color:var(--txt);font-variant-numeric:tabular-nums;min-width:44px;text-align:right}
+
+  /* ---------- 真实设备外壳 ---------- */
+  .chassis{
+    position:relative;width:100%;max-width:452px;margin:0 auto;
+    aspect-ratio:1693 / 2008;
+    background:url('DX20S_device.png') center/contain no-repeat;
+    filter:drop-shadow(0 26px 44px rgba(0,0,0,.62));
+    user-select:none;
+  }
+  .chassis-screen{
+    position:absolute;left:25.10%;top:53.63%;width:57.29%;height:36.25%;
+    background:#000;border-radius:3px;overflow:hidden;
+    box-shadow:0 0 0 1px rgba(0,0,0,.6) inset;
+  }
+  .chassis-screen canvas{display:block;width:100%!important;height:100%!important;image-rendering:pixelated;border-radius:2px}
+  .chassis-key{
+    position:absolute;width:6.86%;height:5.78%;padding:0;border:0;border-radius:50%;
+    background:transparent;cursor:pointer;
+  }
+  .chassis-key::after{
+    content:"";position:absolute;inset:-6%;border-radius:50%;
+    background:radial-gradient(circle,rgba(255,255,255,.55),rgba(255,255,255,0) 72%);
+    opacity:0;transition:opacity .14s;
+  }
+  .chassis-key:hover::after{opacity:.30}
+  .chassis-key:active::after{opacity:.72}
+  .chassis-key:focus-visible{outline:2px solid #4f9eff;outline-offset:2px}
+  .chassis-key.pwr::after{background:radial-gradient(circle,rgba(255,180,120,.7),rgba(255,180,120,0) 72%)}
+
+  /* 关机：屏幕区域填充纯黑（不是压暗，模拟 LCD 断电） */
+  .chassis-screen.powered-off{background:#000}
+  .chassis-screen.powered-off::after{
+    content:"";position:absolute;inset:0;background:#000;pointer-events:none;
+  }
+  /* 注：不再有"息屏/背光关闭"状态 —— 真机电源开关只连 EC190707，
+   * 固件侧没有电源键输入，也不存在电源键切背光的交互。 */
+
+  /* 震动模式：整机抖动（提示模式=震动/联动时触发） */
+  @keyframes dxShake{
+    0%   {transform:translate(0,0) rotate(0deg)}
+    12%  {transform:translate(-3px,1.8px) rotate(-.4deg)}
+    25%  {transform:translate(3px,-1.8px) rotate(.4deg)}
+    38%  {transform:translate(-2.4px,-1.2px) rotate(-.3deg)}
+    50%  {transform:translate(2.4px,1.8px) rotate(.35deg)}
+    63%  {transform:translate(-1.8px,1.2px) rotate(-.22deg)}
+    76%  {transform:translate(1.8px,-1.2px) rotate(.22deg)}
+    88%  {transform:translate(-1.2px,-.6px) rotate(-.12deg)}
+    100% {transform:translate(0,0) rotate(0deg)}
+  }
+  .chassis.shaking{animation:dxShake .1s linear infinite}
+  @media (prefers-reduced-motion: reduce){
+    .chassis.shaking{animation:none}
+  }
+
+  /* 免责声明 */
+  .disclaimer{
+    display:flex;flex-wrap:wrap;align-items:center;gap:8px;
+    margin:0 0 16px;padding:9px 14px;
+    background:linear-gradient(90deg,rgba(255,193,7,.12),rgba(255,193,7,.04));
+    border:1px solid rgba(255,193,7,.34);border-left:3px solid #f5b301;
+    border-radius:10px;font-size:.76rem;color:var(--txt-dim);line-height:1.6;
+  }
+  .disclaimer b{color:#ffd873;font-weight:600}
+  .disclaimer .tag{
+    display:inline-flex;align-items:center;gap:5px;
+    background:rgba(245,179,1,.16);border:1px solid rgba(245,179,1,.34);
+    color:#ffd873;border-radius:999px;padding:2px 10px;font-size:.72rem;white-space:nowrap;
+  }
+  .disclaimer .tag i{width:6px;height:6px;border-radius:50%;background:#f5b301;display:inline-block}
+
+  .chassis-cap{
+    display:flex;justify-content:center;gap:16px;margin-top:10px;font-size:.72rem;color:var(--txt-dim);
+  }
+  .chassis-cap b{color:var(--txt);font-weight:600}
+
+  /* ---------- 信号分析面板 ---------- */
+  .sigpanel{
+    margin-top:16px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;
+  }
+  .sigpanel h3{font-size:.86rem;font-weight:600;margin-bottom:11px;display:flex;align-items:center;justify-content:space-between}
+  .sigpanel h3 em{font-style:normal;font-size:.74rem;color:var(--txt-dim)}
+  .sigstate{
+    display:inline-flex;align-items:center;gap:7px;font-size:.75rem;padding:4px 11px;border-radius:999px;
+    border:1px solid transparent;
+  }
+  .sigstate.ok{background:rgba(74,222,128,.13);color:#4ade80;border-color:rgba(74,222,128,.3)}
+  .sigstate.mid{background:rgba(250,204,21,.13);color:#facc15;border-color:rgba(250,204,21,.3)}
+  .sigstate.bad{background:rgba(248,113,113,.13);color:#f87171;border-color:rgba(248,113,113,.3)}
+  .sigstate.idle{background:#232732;color:var(--txt-dim);border-color:var(--line)}
+  .sigtbl{width:100%;border-collapse:collapse;font-size:.76rem}
+  .sigtbl td{padding:5px 0;border-bottom:1px dashed rgba(255,255,255,.07)}
+  .sigtbl td:first-child{color:var(--txt-dim)}
+  .sigtbl td:last-child{text-align:right;color:var(--txt);font-variant-numeric:tabular-nums}
+  .sigtbl td.neg{color:#f87171}
+  .sigtbl td.pos{color:#4ade80}
+  .bar{height:5px;border-radius:3px;background:#262b36;overflow:hidden;margin-top:9px}
+  .bar > i{display:block;height:100%;border-radius:3px;transition:width .3s,background .3s}
+
+  /* ---------- 调试工具抽屉 ---------- */
+  .tools{
+    margin-top:20px;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;
+  }
+  .tools > summary{
+    list-style:none;cursor:pointer;padding:12px 16px;font-size:.83rem;font-weight:600;
+    display:flex;align-items:center;gap:9px;background:#171a21;
+  }
+  .tools > summary::-webkit-details-marker{display:none}
+  .tools > summary::before{content:"▸";color:var(--accent);transition:.2s;display:inline-block}
+  .tools[open] > summary::before{transform:rotate(90deg)}
+  .tools > summary small{font-weight:400;color:var(--txt-dim);font-size:.74rem;margin-left:auto}
+  .tools .panel-col{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;padding:16px;
+  }
+  .tools .panel-col > .card{margin:0}
+
+  /* ---------- 科普问答 ---------- */
+  .faq{margin-top:24px}
+  .faq h2{font-size:1.12rem;font-weight:600;margin-bottom:6px}
+  .faq .lead{font-size:.83rem;color:var(--txt-dim);margin-bottom:14px;line-height:1.7}
+  .faqgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:12px}
+  .faqitem{
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;
+  }
+  .faqitem > summary{
+    list-style:none;cursor:pointer;padding:12px 15px;font-size:.83rem;font-weight:600;line-height:1.5;
+    display:flex;gap:10px;align-items:flex-start;
+  }
+  .faqitem > summary::-webkit-details-marker{display:none}
+  .faqitem > summary::before{
+    content:"?";flex:none;width:19px;height:19px;border-radius:50%;background:#2a3040;color:var(--accent);
+    font-size:.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px;
+  }
+  .faqitem[open] > summary{color:#fff;background:#20242e}
+  .faqitem .a{padding:0 15px 14px 44px;font-size:.79rem;line-height:1.85;color:#c3cad8}
+  .faqitem .a b{color:var(--txt)}
+  .faqitem .a code{
+    background:#232732;padding:1px 6px;border-radius:5px;font-size:.76rem;color:#7fd1ff;
+    font-family:ui-monospace,Menlo,Consolas,monospace;
+  }
+  .faqitem .a .num{color:#7fd1ff;font-variant-numeric:tabular-nums}
+  .faqitem .a ul{margin:7px 0 0 2px}
+  .faqitem .a li{margin:4px 0}
+
+  /* 截图模式：只留屏幕画布 */
+  body.shot .chassis{width:640px;max-width:none;aspect-ratio:auto;background:none;filter:none}
+  body.shot .chassis-screen{left:0;top:0;width:640px;height:480px;border-radius:0}
+  body.shot .chassis-key,body.shot .chassis-cap,body.shot .sigpanel,
+  body.shot .world-wrap,body.shot .tools,body.shot .faq,body.shot .world-bar,
+  body.shot .topbar,body.shot .disclaimer{display:none}
+  body.shot .layout{display:block;gap:0}
+  body.shot .device-col{display:block;width:640px;max-width:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div>
+      <h1>DX-20S 便携防护预警终端 · 使用场景模拟器</h1>
+      <div class="sub">真实设备外壳 · 城市 / 郊区双场景动态推演 · 看见信号为什么收得到、收不到</div>
+    </div>
+    <div class="topctl">
+      <div class="seg" id="seg-mode">
+        <button data-mode="urban" class="on">城市场景</button>
+        <button data-mode="suburb">郊区场景</button>
+      </div>
+      <div class="seg" id="seg-preset" style="display:none"></div>
+      <div class="tgl" id="tgl-anim" title="低端设备可关闭动画以省电"><i class="dot"></i><span>动画</span></div>
+      <div class="tgl" id="tgl-wave" title="信号波纹可视化"><i class="dot"></i><span>波纹</span></div>
+      <div class="clock" id="clock">—</div>
+      <div class="badge">固件 20S_V2.2.1_261019C · 821.2375MHz</div>
+    </div>
+  </div>
+
+  <!-- ============ 免责声明 ============ -->
+  <div class="disclaimer" role="note">
+    <span class="tag"><i></i>重要提示</span>
+    <span>本页面内容<b>由 AI 生成</b></span>
+    <span>·</span>
+    <span><b>仅供原理展示</b></span>
+    <span>·</span>
+    <span><b>不代表实际效果</b></span>
+    <span>·</span>
+    <span><b>本页面列车均为模拟</b>，车次、时刻与运行状态非真实数据</span>
+    <span>·</span>
+    <span>实际接收效果请以真实设备与现场环境为准</span>
+  </div>
+
+  <div class="layout">
+
+    <!-- ============ 场景世界 ============ -->
+    <div class="world-wrap">
+      <div class="world-bar">
+        <div class="ttl" id="world-ttl">城市场景<span>建筑遮挡 · 基站干扰</span></div>
+        <div class="tools">
+          <button class="mini" id="btn-zoom-out">−</button>
+          <button class="mini" id="btn-zoom-reset">复位</button>
+          <button class="mini" id="btn-zoom-in">＋</button>
+          <button class="mini" id="btn-tilt">天线倾角 0°</button>
+          <button class="mini" id="btn-regen">重新生成场景</button>
+        </div>
+      </div>
+      <svg id="world" viewBox="0 0 1200 620" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div class="hud">
+        <div class="hudcard">
+          <div class="row"><span>当前来车</span><span id="hud-train">—</span></div>
+          <div class="row"><span>直线距离</span><span id="hud-dist">—</span></div>
+          <div class="row"><span>预警提前量</span><span id="hud-lead">—</span></div>
+          <div class="row"><span>接收信号</span><span id="hud-rssi">—</span></div>
+        </div>
+        <div class="hudcard">
+          <div class="slider"><span>天线倾角</span><input type="range" id="rng-tilt" min="0" max="80" value="0"><b id="lbl-tilt">0°</b></div>
+          <div class="slider"><span>举高高度</span><input type="range" id="rng-h" min="0.5" max="30" step="0.5" value="1.5"><b id="lbl-h">1.5 m</b></div>
+        </div>
+      </div>
+      <div class="legend" id="legend"></div>
+    </div>
+
+    <!-- ============ 设备 ============ -->
+    <div class="device-col">
+      <div class="chassis" id="chassis">
+        <div class="chassis-screen"><canvas id="screen" width="1920" height="1440"></canvas></div>
+        <button class="chassis-key" data-key="K1" style="left:6.85%;top:52.59%" title="K1 菜单 / 返回"></button>
+        <button class="chassis-key" data-key="K2" style="left:6.85%;top:63.44%" title="K2 上翻 / 更早"></button>
+        <button class="chassis-key" data-key="K3" style="left:6.85%;top:74.45%" title="K3 下翻 / 更新"></button>
+        <button class="chassis-key" data-key="K4" style="left:6.85%;top:85.66%" title="K4 确认"></button>
+        <button class="chassis-key pwr" data-key="PWR" style="left:87.71%;top:52.59%" title="电源键"></button>
+      </div>
+      <div class="chassis-cap">
+        <span>当前画面：<b id="meta-mode">待机监听</b></span>
+        <span><b>K1</b> 菜单/返回</span><span><b>K2</b> 上翻</span><span><b>K3</b> 下翻</span><span><b>K4</b> 确认</span><span><b>电源</b> 长按开关机</span>
+      </div>
+
+      <div class="sigpanel">
+        <h3>信号链路分析<span class="sigstate idle" id="sig-state">等待来车</span></h3>
+        <table class="sigtbl">
+          <tr><td>发射功率 / 天线增益</td><td>20 dBm / +2 dBi</td></tr>
+          <tr><td>路径损耗（自由空间扩展）</td><td id="s-loss">—</td></tr>
+          <tr><td>建筑 / 地形遮挡损耗</td><td id="s-obs">—</td></tr>
+          <tr><td>天线极化失配损耗</td><td id="s-pol">—</td></tr>
+          <tr><td>接收功率</td><td id="s-pr">—</td></tr>
+          <tr><td>噪声底（含基站干扰）</td><td id="s-noise">—</td></tr>
+          <tr><td>信噪比</td><td id="s-snr">—</td></tr>
+          <tr><td>有效接收率</td><td id="s-rate">—</td></tr>
+        </table>
+        <div class="bar"><i id="s-bar" style="width:0%"></i></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 调试工具（折叠） ============ -->
+  <details class="tools">
+    <summary>调试工具（自定义消息 · 快捷跳转 · 设备开关 · 导出画面 · 声音）<small>说明书配图与功能自测用，日常浏览可保持折叠</small></summary>
+    <div class="panel-col">
+
+      <div class="card">
+        <h2>列车消息（可自定义）</h2>
+        <div class="field">
+          <label>消息类型</label>
+          <select id="m-type">
+            <option value="1">1 · 新版混合预警</option>
+            <option value="0">0 · 传统车次速度公里标</option>
+            <option value="2">2 · LBJ 时间</option>
+          </select>
+        </div>
+        <div class="grid2">
+          <div class="field">
+            <label>字头</label>
+            <input id="m-cls" value="G">
+          </div>
+          <div class="field">
+            <label>车次</label>
+            <input id="m-train" value="89">
+          </div>
+        </div>
+        <div class="grid2">
+          <div class="field">
+            <label>速度 km/h</label>
+            <input id="m-speed" value="348">
+          </div>
+          <div class="field">
+            <label>公里标 K</label>
+            <input id="m-pos" value="1234.5">
+          </div>
+        </div>
+        <div class="grid2">
+          <div class="field">
+            <label>机车型号</label>
+            <input id="m-ltype" value="CR400AF">
+          </div>
+          <div class="field">
+            <label>机车注册号(8位)</label>
+            <input id="m-loco" value="23502001">
+          </div>
+        </div>
+        <div class="grid2">
+          <div class="field">
+            <label>线路</label>
+            <input id="m-route" value="京广高铁">
+          </div>
+          <div class="field">
+            <label>行别</label>
+            <select id="m-dir">
+              <option value="3">上行</option>
+              <option value="1">下行</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>信号强度 dBm</label>
+          <input id="m-rssi" value="-78.4">
+        </div>
+        <div class="btnrow">
+          <button class="btn" id="btn-send">发送并显示在屏</button>
+          <button class="btn ghost" id="btn-back2rx">回到监听</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>快捷跳转</h2>
+        <table class="jump">
+          <tr><td class="k">主界面</td><td><button data-jump="rx">等待接收消息</button></td><td><button data-jump="review">回看模式</button><button data-jump="lowbatt">低电量提示</button></td></tr>
+          <tr><td class="k">信息页</td><td><button data-jump="show">新版预警消息</button></td><td><button data-jump="showold">旧版预警消息</button><button data-jump="showtime">时间消息</button></td></tr>
+          <tr><td class="k">信息页</td><td><button data-jump="rxinfo">当前条目详细信息</button></td></tr>
+          <tr><td class="k">菜单 1/3</td><td><button data-jump="menu1">功能菜单</button></td></tr>
+          <tr><td class="k">菜单 2/3</td><td><button data-jump="menu2">功能菜单</button></td></tr>
+          <tr><td class="k">菜单 3/3</td><td><button data-jump="menu3">功能菜单</button></td></tr>
+          <tr><td class="k">[1]</td><td><button data-jump="qv">历史消息快捷查看</button></td><td><button data-jump="qvmode">显示模式选择</button></td></tr>
+          <tr><td class="k">[2]</td><td><button data-jump="anc">提示模式设置</button></td><td><button data-jump="snd1">音效设置 &lt;1/2&gt;</button><button data-jump="snd2">音效设置 &lt;2/2&gt;</button></td></tr>
+          <tr><td class="k">[3]</td><td><button data-jump="bri">屏幕 & 息屏时间</button></td></tr>
+          <tr><td class="k">[4]</td><td><button data-jump="theme1">主题选择 &lt;1/2&gt;</button></td></tr>
+          <tr><td class="k">[4]</td><td><button data-jump="theme2">显示元素 &lt;2/2&gt;</button></td></tr>
+          <tr><td class="k">[5]</td><td><button data-jump="time">手动设置时间</button></td></tr>
+          <tr><td class="k">[6]</td><td><button data-jump="freq">自动频率校正</button></td></tr>
+          <tr><td class="k">[7]</td><td><button data-jump="cond">条件过滤 & 通用设置</button></td></tr>
+          <tr><td class="k">[8]</td><td><button data-jump="kilo">公里标 & 告警条件设置</button></td><td><button data-jump="kiloindex">设置本地公里标</button></td></tr>
+          <tr><td class="k">[9]</td><td><button data-jump="index">历史条目索引</button></td></tr>
+          <tr><td class="k">[10]</td><td><button data-jump="status">系统状态监控</button></td></tr>
+          <tr><td class="k">[11]</td><td><button data-jump="about1">关于本机 &lt;1/2&gt;</button></td></tr>
+          <tr><td class="k">[12]</td><td><button data-jump="formatfs">删除历史消息（确认框）</button></td></tr>
+          <tr><td class="k">[13]</td><td><button data-jump="formatset">重置全部设置</button></td></tr>
+          <tr><td class="k">提示框</td><td><button data-jump="msg">showMessage 对话框</button></td></tr>
+        </table>
+      </div>
+
+      <div class="card">
+        <h2>设备状态 / 开关</h2>
+        <div class="toggles" id="toggles"></div>
+      </div>
+
+      <div class="card">
+        <h2>导出画面</h2>
+        <div class="btnrow">
+          <button class="btn" id="btn-jpg">导出屏幕 JPG</button>
+          <button class="btn ghost" id="btn-jpg-full">导出整机 JPG</button>
+        </div>
+        <div class="btnrow" style="margin-top:10px">
+          <button class="btn ghost" id="btn-jpg-all">导出全部页面（逐页下载）</button>
+        </div>
+        <div class="hintline" style="margin-top:11px">
+          导出的图片可直接插入说明书。首次使用请等待鸿蒙字体加载完成（约 1 秒）后再导出，否则可能回退到系统字体。<br>
+          「导出全部页面」会按右侧页面清单依次截图并下载，浏览器可能提示“允许下载多个文件”，请选择允许。
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>声音提示</h2>
+        <div class="toggles">
+          <div class="tg">
+            <span>网页声音总开关</span>
+            <div class="sw on" id="sw-sound"></div>
+            <span class="v" id="v-sound">开</span>
+          </div>
+        </div>
+        <div class="hintline" style="margin:9px 0 10px">
+          提示音按当前<b>提示模式</b>播放：静音=无声；声音=旋律；震动=机身振动（需支持振动的设备）；联动=旋律+振动。<br>
+          <b>在网页上</b>，提示模式选为<b>震动</b>或<b>联动</b>时，设备外壳会随震动提示<b>整体抖动</b>（桌面浏览器不支持 <code>navigator.vibrate</code>，故用画面抖动代替）。
+          试听不受提示模式限制。
+        </div>
+        <div class="grid2" id="snd-btns"></div>
+        <div class="hintline" style="margin:12px 0 8px">
+          <b>音调预设</b>（对应菜单：提示模式切换 → 音效设置）：点击在 高音/中音/低音/默认 间循环并立即试听；
+          “默认”为各类提示音的内置旋律。仅<b>无源蜂鸣器</b>版本有此项。
+        </div>
+        <div class="grid2" id="tone-btns"></div>
+      </div>
+
+      <div class="card">
+        <h2>按键对照</h2>
+        <div class="hintline">
+          <b>K1</b> 650~1000 &nbsp;·&nbsp; <b>K2</b> 1500~2000 &nbsp;·&nbsp; <b>K3</b> 2710~3900 &nbsp;·&nbsp; <b>K4</b> 4000~4096（AD 分压值）<br>
+          键盘快捷键：<code>1/2/3/4</code> 对应 K1~K4，<code>↑/↓</code> 对应 K2/K3，<code>Esc</code> 为 K1。<br>
+          <b>电源键</b>：<b>长按 ≥ 0.6 秒</b> 开机 / 关机（关机后屏幕区域填充纯黑）。<b>单击无功能</b>——实际设备的电源开关是纯硬件开关，只连接 EC190707 一路网络，固件侧没有电源键输入，不存在"单击切背光"的交互。
+        </div>
+      </div>
+
+    </div>
+  </details>
+  <!-- ============ 科普问答 ============ -->
+  <section class="faq">
+    <h2>为什么会有这些现象？—— 接收距离的科学与原理</h2>
+    <div class="disclaimer" role="note" style="margin-bottom:16px">
+      <span class="tag"><i></i>阅读前请知悉</span>
+      <span>本页内容<b>由 AI 生成</b>、<b>仅供原理展示</b>、<b>不代表实际效果</b>；<b>本页面列车均为模拟</b>，所有车次、时刻、线路与运行状态都是程序随机生成，并非真实铁路数据。</span>
+    </div>
+    <p class="lead">下面的解释与左侧推演使用同一套参数：工作频点 <b>821.2375 MHz</b>、FSK 码速率 <b>4.8 kbps</b>、接收带宽 <b>12.5 kHz</b>、车载台发射功率 <b>20 dBm</b>、设备接收灵敏度 <b>−106 dBm</b>。数值会随你拖动设备、切换场景而实时变化。</p>
+    <div class="faqgrid">
+
+      <details class="faqitem" open><summary>为什么市区只能收到 1~2 公里，郊区却能到 5 公里以上？</summary><div class="a">
+        <p>决定因素是<b>路径损耗指数</b>和<b>遮挡</b>两件事。</p>
+        <ul>
+          <li>没有遮挡时，电波按 <code>路径损耗 = 96 + 10·n·log₁₀(d/1000)</code> 衰减。<b>n</b> 是环境系数：开阔郊区约 <span class="num">3.0</span>，密集城区约 <span class="num">3.2</span>。</li>
+          <li>开阔地 5 km 处接收功率仍有约 <span class="num">−93 dBm</span>，高出灵敏度 <span class="num">13 dB</span>，所以郊区的可靠接收能到 5 km 以上，甚至十几公里。</li>
+          <li>城区里楼房把直线切断，一次建筑遮挡就加 <span class="num">10~36 dB</span> 损耗——相当于把距离直接拉远好几倍。这就是"市区 1~2 km"的根本原因。</li>
+        </ul>
+        <p>切到"郊区场景"再看看，信号强度曲线在测距带上的衰减会明显变缓。</p>
+      </div></details>
+
+      <details class="faqitem"><summary>为什么把设备举高就能多收到车？</summary><div class="a">
+        <p>因为<b>视距</b>。无线信号在传播路径被楼体挡住时，会靠绕射"拐弯"过去，而 800 MHz 波长约 <span class="num">36 cm</span>，绕射能力很弱，楼房一挡基本就断。</p>
+        <ul>
+          <li>把天线从 <span class="num">1.5 m</span> 举到 <span class="num">20 m</span>，视线可以越过 <span class="num">4~5 层</span> 以下的老旧小区，遮挡损耗常常从 <span class="num">30 dB</span> 降到 <span class="num">个位数</span>；要越过新建高层，得把设备搬到楼顶。</li>
+          <li>举高还有第二个好处：地面和建筑反射的"多径"成分减少，接收信号更稳定，误码率下降。</li>
+        </ul>
+        <p>试试把右侧"举高高度"滑块拉到 <span class="num">15 m</span> 以上，同时观察"建筑 / 地形遮挡损耗"一栏和信号状态的变化。</p>
+      </div></details>
+
+      <details class="faqitem"><summary>天线为什么要竖直拿着？斜着拿会差多少？</summary><div class="a">
+        <p>设备用的是<b>棒状天线</b>，车上的 LBJ 电台也是竖直杆状天线，两者的极化方向都是<b>垂直极化</b>。接收天线与来波极化方向一致时效率最高。</p>
+        <ul>
+          <li>倾角 <span class="num">0°</span>：完全匹配，损耗 <span class="num">0 dB</span>。</li>
+          <li>倾角 <span class="num">30°</span>：损耗约 <span class="num">1.2 dB</span>；<span class="num">60°</span> 约 <span class="num">6 dB</span>；<span class="num">75°</span> 约 <span class="num">11.6 dB</span>。</li>
+          <li>6 dB 大约相当于<b>把有效距离缩短一半</b>——这是很多人"明明站在轨道边却收不到"的原因。</li>
+        </ul>
+        <p>把"天线倾角"滑到 <span class="num">60°</span>，看"天线极化失配损耗"和接收功率怎么变。</p>
+      </div></details>
+
+      <details class="faqitem"><summary>为什么旁边的手机基站会干扰设备？</summary><div class="a">
+        <p>手机基站工作在 <b>800 MHz 频段</b>，与设备的工作频点<b>同频段</b>。基站的发射功率远大于车头电台（几十瓦 vs 几百毫瓦），即使距离更远，进入设备接收频段的那一小部分能量仍然可能盖过车头信号。</p>
+        <ul>
+          <li>设备带宽只有 <span class="num">12.5 kHz</span>，只能截取基站信号的一小段，但这段仍足以抬高噪声底。</li>
+          <li>当基站距离只有 <span class="num">100~200 m</span> 时，带内干扰可把噪声底抬到 <span class="num">−76 ~ −83 dBm</span>，与车头信号同量级甚至更高，设备开始丢包、<b>严重时一条都收不到</b>。</li>
+          <li>场景里基站的<b>红色虚线波纹</b>就是干扰；两圈波纹相遇的位置会画出<b>黄色叉号</b>，那正是信号最容易丢包的地方。</li>
+        </ul>
+      </div></details>
+
+      <details class="faqitem"><summary>高铁经过为什么没有预警？</summary><div class="a">
+        <p>场景里 <b>G 字头（高铁）</b>和 <b>C 字头（城际）</b>列车经过时设备不会响，这是符合实际的：</p>
+        <ul>
+          <li>高速铁路装备 CTCS 列控系统与应答器，靠<b>地面设备</b>向列车传送移动授权，<b>不依赖车载无线</b>对地面人员报警。</li>
+          <li>普速线路靠机车信号设备，作业人员需要自备终端接收机车发出的运行信息，才有了 LBJ 终端这类设备。</li>
+          <li>所以高铁<b>不发预警</b>，普速客货列车才发。你可以在场景里看到高铁安静通过、货车和普速车触发预警。</li>
+        </ul>
+      </div></details>
+
+      <details class="faqitem"><summary>预警能提前多久？和距离、速度有什么关系？</summary><div class="a">
+        <p>提前量 = <b>距离 ÷ 速度</b>，这是最直接的换算：</p>
+        <ul>
+          <li>距离 <span class="num">800 m</span>、货车时速 <span class="num">80 km/h</span> → 提前约 <span class="num">36 秒</span>。</li>
+          <li>距离 <span class="num">1500 m</span>、普速客车 <span class="num">140 km/h</span> → 提前约 <span class="num">39 秒</span>。</li>
+          <li>距离 <span class="num">2000 m</span>、高铁 <span class="num">300 km/h</span> → 只有 <span class="num">24 秒</span>，而且高铁本来就不发预警。</li>
+        </ul>
+        <p>所以"能收到多远"和"能提前多久"是两个问题：<b>距离决定能不能收到，速度决定收到时还剩多少时间</b>。速度越快，同样的接收距离提前量越短。</p>
+      </div></details>
+
+      <details class="faqitem"><summary>山区和密林为什么会明显缩短距离？</summary><div class="a">
+        <p>两种机理不同，效果也不同：</p>
+        <ul>
+          <li><b>山体遮挡</b>是<b>硬遮挡</b>：按 ITU-R P.526 单刀刃绕射计算，山脊高出视线多少，就额外损失多少，常见 <span class="num">15~40 dB</span>，最严重时信号直接归零。场景"西南山区"里山脊会随机起伏，换个位置结果完全不同。</li>
+          <li><b>林带</b>是<b>软吸收</b>：树叶对 800 MHz 有 <span class="num">0.3~0.4 dB/米</span> 的吸收。穿过 <span class="num">100 m</span> 林带就损失 <span class="num">30~40 dB</span>（本模型按上限 <span class="num">22 dB</span> 计），比同等高度的楼房还狠。</li>
+        </ul>
+        <p>林带还有个季节因素：夏天枝叶茂盛，衰减最大；秋冬落叶后能好一些。</p>
+      </div></details>
+
+      <details class="faqitem"><summary>屏幕上的信号格和 RSSI 数值该怎么看？</summary><div class="a">
+        <p>设备用 <b>RSSI（接收信号强度）</b>表示链路质量，量程 <span class="num">−120 ~ −70 dBm</span>，分 5 格显示。</p>
+        <ul>
+          <li>≥ <span class="num">−90 dBm</span>：5 格，链路富余，消息可靠解码。</li>
+          <li><span class="num">−90 ~ −100 dBm</span>：3 格上下，仍可用，但抗干扰余量小。</li>
+          <li>&lt; <span class="num">−106 dBm</span>：低于灵敏度，<b>收不到</b>。</li>
+        </ul>
+        <p>菜单里的"RSSI 过滤值"（−100 / −95 / −90 / −85 / −80 dBm）就是<b>设一个门槛，低于它的消息直接丢弃不提示</b>——在干扰强的城市里很有用。</p>
+      </div></details>
+
+      <details class="faqitem"><summary>为什么同一条车次有时收不到，下一条又收到了？</summary><div class="a">
+        <p>因为 LBJ 电台是<b>周期播发</b>的（场景里按 <span class="num">4 秒</span> 一组模拟）。每一次播发是一次独立传输：</p>
+        <ul>
+          <li>在有效距离内、信噪比足够 → 这一帧解出来，设备刷新一次消息。</li>
+          <li>处在建筑阴影切换的瞬间、或者被基站干扰压制 → 这一帧丢掉，设备保持显示上一条。</li>
+        </ul>
+        <p>所以你会看到消息"跳着更新"——这是正常的分包接收结果，不代表设备漏报。信号面板底部的<b>有效接收率</b>就是把成功解码次数除以总播发次数。</p>
+      </div></details>
+
+      <details class="faqitem"><summary>城市里显示的"类型"准吗？</summary><div class="a">
+        <p>不准，而且<b>只能作参考</b>。设备没有联网查询车次库，类型是把车次号按规则反推出来的：</p>
+        <ul>
+          <li>字头 + 号段 → 类别（如 <code>G1~G4998</code> 判为直通高速动车，<code>G5001+</code> 判为管内高速动车）。</li>
+          <li>货运班列在 <b>新版规则</b>里改用 <b>B 字头</b>，而 <b>X 字头</b>在新版是复兴号动车组、旧版才是中欧班列——所以升级固件后同一车次的名称会变。</li>
+          <li>要切换新旧规则，功能菜单 [4] → 显示元素 →〈1〉列车类型显示，按 K4 循环。</li>
+        </ul>
+        <p>需要准确的列车信息时，以车头实际发送的内容和调度命令为准。</p>
+      </div></details>
+
+      <details class="faqitem"><summary>设备"只接收不发射"，那它怎么知道车次号和公里标？</summary><div class="a">
+        <p>信息是<b>车头发过来的</b>，不是设备自己算的。车头的 LBJ 电台把车次号、速度、公里标、机车类型等字段编成无线报文周期发出；设备只是<b>被动接收并解码显示</b>。</p>
+        <ul>
+          <li>所以设备不需要联网。</li>
+          <li>也正因为被动接收，<b>车头电台发得越弱、设备离得越远，中间又隔着楼，信息就越容易残缺或丢失</b>——这正是本页场景要演示的内容。</li>
+        </ul>
+      </div></details>
+
+      <details class="faqitem"><summary>实际使用中怎么提高接收效果？</summary><div class="a">
+        <p>把本页能调的几个变量对应到实操：</p>
+        <ul>
+          <li><b>选开阔位置</b>：站到线路侧的空旷处、桥上、高处，比待在楼群里强得多。</li>
+          <li><b>把设备举高</b>：手举过头顶、放在窗台或车顶，比贴身携带效果提升明显。</li>
+          <li><b>保持天线竖直</b>：手机/终端尽量竖着拿，别横过来贴着身体。</li>
+          <li><b>远离强干扰源</b>：基站天线附近信号被压制最严重。</li>
+          <li><b>合理设置 RSSI 过滤档</b>：环境差时把门槛调高（如 −90 dBm），避免被弱信号和干扰刷屏。</li>
+          <li><b>善用震动与提示音</b>：视线不佳时，声音和震动比盯着屏幕更可靠。</li>
+        </ul>
+      </div></details>
+
+    </div>
+  </section>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =====================================================================
+ * DX-20S 界面模拟器
+ * 以 Canvas 2D 模拟 TFT_eSPI 绘图原语，逐函数对应 src/ScreenWrapper.cpp
+ * 与 src/Menu.cpp 中的实现。
+ * ===================================================================== */
+
+/* ---------- 1. 硬件 / 布局常量（src/utilities.h, src/Menu.cpp） ---------- */
+const SCALE      = 6;                 // canvas 内部绘制倍率，导出更清晰
+const SCREEN_W   = 320;               // setRotation(3) 后的逻辑宽度
+const SCREEN_H   = 240;               // 逻辑高度
+const MENU_HEADER_HEIGHT = 30;
+const MENU_ITEM_HEIGHT   = 30;
+const DIALOG_W = 220, DIALOG_H = 150, DIALOG_X = 50, DIALOG_Y = 45;
+
+// HMOS = 20px 行高字库, HMOS_28 = 28px, UI20 = 20px
+const FONT_HMOS = 20, FONT_HMOS_28 = 28, FONT_UI20 = 20;
+const FONT_FAMILY = '"HarmonyOS Sans SC","PingFang SC","Microsoft YaHei",sans-serif';
+
+// 新版预警界面各行 Y 坐标
+const Y_LINE_1 = 30, Y_LINE_2 = 70, Y_LINE_3 = 110;
+const Y_LINE_4 = 150, Y_LINE_5 = 180, Y_LINE_6 = 200;
+
+const BLACK = 0x0000, WHITE = 0xFFFF;
+const TFT_GREEN = 0x07E0, TFT_YELLOW = 0xFFE0, TFT_RED = 0xF800;
+
+/* ---------- 2. 主题（src/networks.cpp: setThemeColor） ---------- */
+const THEMES = [
+  { name:'OwlRF 默认', BACK:0x0000, TOP:0xFDA0, BOTTOM:0x07FF, BATT:0x07E0, TITLE:0x07E0, TEXT:0xFFFF, UP:0x07E0, DOWN:0xF800, OTHER:0xFFFF, TOWER_L:0xF800, TOWER_M:0xFDA0, TOWER_H:0x07E0 },
+  { name:'夜视红调',   BACK:0x7800, TOP:0xF800, BOTTOM:0xF800, BATT:0xF800, TITLE:0xF800, TEXT:0xF800, UP:0xF800, DOWN:0xF800, OTHER:0xF800, TOWER_L:0xF800, TOWER_M:0xF800, TOWER_H:0xF800 },
+  { name:'绿色荧幕',   BACK:0x0000, TOP:0x07E0, BOTTOM:0x07E0, BATT:0x07E0, TITLE:0x07E0, TEXT:0x07E0, UP:0x07E0, DOWN:0x07E0, OTHER:0x07E0, TOWER_L:0x07E0, TOWER_M:0x07E0, TOWER_H:0x07E0 },
+  { name:'蓝色荧幕',   BACK:0x0000, TOP:0x07FF, BOTTOM:0x07FF, BATT:0x07FF, TITLE:0x07FF, TEXT:0x07FF, UP:0x07FF, DOWN:0x07FF, OTHER:0x07FF, TOWER_L:0x07FF, TOWER_M:0x07FF, TOWER_H:0x07FF },
+  { name:'浅色模式',   BACK:0xFFFF, TOP:0x0000, BOTTOM:0x0000, BATT:0x0000, TITLE:0x0000, TEXT:0x0000, UP:0x0000, DOWN:0x0000, OTHER:0x0000, TOWER_L:0x0000, TOWER_M:0x0000, TOWER_H:0x0000 },
+  { name:'深空蓝',     BACK:0x0010, TOP:0x7C3F, BOTTOM:0x5D9C, BATT:0x27E9, TITLE:0x7C3F, TEXT:0xC618, UP:0x27E9, DOWN:0xD800, OTHER:0xC618, TOWER_L:0x27E9, TOWER_M:0x7C3F, TOWER_H:0x5D9C },
+  { name:'暖金色',     BACK:0x0000, TOP:0xFD20, BOTTOM:0xFE40, BATT:0x07E0, TITLE:0xFD20, TEXT:0xFFE0, UP:0x07E0, DOWN:0xF800, OTHER:0xFFE0, TOWER_L:0xF800, TOWER_M:0xFD20, TOWER_H:0x07E0 },
+  { name:'紫罗兰',     BACK:0x1004, TOP:0xD81B, BOTTOM:0xB81B, BATT:0x07E0, TITLE:0xD81B, TEXT:0xEF7D, UP:0x07E0, DOWN:0xF800, OTHER:0xEF7D, TOWER_L:0xF800, TOWER_M:0xD81B, TOWER_H:0x07E0 },
+];
+
+const MENU_PAGE_ITEMS = [
+  ['[1] 历史消息快捷查看','[2] 提示模式切换','[3] 屏幕 & 息屏时间','[4] 主题 & 显示元素','[5] 手动设置时间'],
+  ['[6] 自动频率校正','[7] 条件过滤 & 通用','[8] 公里标过滤 & 设置','[9] 历史条目索引','[10] 系统状态监控'],
+  ['[11] 关于本机','[12] 删除历史消息','[13] 重置全部设置','',''],
+];
+
+const MENU_TIMEOUT_ARRY = [30, 60, 120];
+const LCD_LIGHTTIME_ARRY = [3, 5, 10, 15, 30, 60];
+const BRI_LEVELS = [51, 102, 153, 204, 255];
+// src/boards.cpp: float Kilo_limit_arry[] = {0.5,0.5,0.8,1.0,1.5,2.0,3.0,4.0,5.0,8.0,10.0,20.0,50.0,999.0}
+const KILO_LIMIT_ARRY = [0.5, 0.5, 0.8, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0, 8.0, 10.0, 20.0, 50.0, 999.0];
+
+const BATINFO_NAMES = ['电池电压','预估电量','不显示'];
+const ANC_MODE_NAMES = ['[静音]','[声音]','[震动]','[联动]'];
+const ANC_MODE_LONG  = ['静默','声音','震动','声音 + 震动'];
+
+/* ---------- 3. 全局设置（NVS 持久化变量，默认值取自 initNVSvar） ---------- */
+const cfg = {
+  anc_mode: 3,
+  display_style: 0,
+  lcd_brightness: 255,
+  lcd_lighttime: 2,
+  BATINFO_level: 2,
+  invert_display: true,
+  train_type_display: 2,      // 列车类型显示 0=关闭 1=旧版分类 2=新版分类(铁运〔2026〕74号)
+  train_grade_display: true,  // 车次等级标识（仅新版分类时生效）
+  signal_tower_display: true,
+  filt_none_msg: false,
+  filt_usignTrain_msg: false,
+  filt_old_msg: false,
+  filt_LBJtime_msg: false,
+  filt_weakSig_msg: false,
+  enable_kilo_flit: false,
+  enable_UP_flit: true,
+  enable_DOWN_flit: true,
+  enable_departure_flit: false,
+  enable_arrivaltime_disp: false,
+  Kilo_limit_level: 13,
+  m_kmTenths: 10000,
+  enable_powerSave: true,
+  flit_lowpowerOFF: false,
+  freq_correction: true,
+  longAnc: false,
+  quick_view_mode: 0,
+  menu_timeout_idx: 1,
+  boot_sound_en: true,       // 开机音效开关（菜单：音效设置 → 开机音效）
+  boot_sound_type: 0,        // 开机音效风格 0=标准 1=欢快 2=经典
+  alert_std_mode: 0,         // 提示音规范 0=非标 1=国标（菜单：提示模式切换 → 提示音）
+  // 音调预设 0=高音 1=中音 2=低音 3=默认旋律（菜单：提示模式切换 → 音效设置；src/alert.cpp snd_tone_cfg）
+  snd_tones: { key:3, confirm:3, cancel:3, back:3, error:3, alarmUp:3, alarmDown:3, alarmOther:3 },
+};
+
+const sys = {
+  voltage: 4.02,
+  rtc_temp: 32,
+  have_rtc: true,
+  charging: false,
+  no_wifi: false,
+  uptimeMs: 3 * 3600e3 + 24 * 60e3 + 9e3,   // 3天0小时24分
+  freeHeapKB: 218,
+  minHeapKB: 164,
+  cpuMhz: 240,
+  ppm: 2.35,
+  ferHz: -1928.0,
+  backlightOn: true,
+};
+
+/* ---------- 3.5 声音引擎（src/alert.cpp 旋律表，无源蜂鸣器模式） ----------
+ * 旋律数据 [频率Hz, 发声ms, 停顿ms] 与 alert.cpp 中 Note 表逐条一致。
+ * 播放行为与固件一致：
+ *   - 按键/确认/返回音（alertUi）：受"提示模式"控制
+ *       静音=不出声 | 声音=旋律 | 震动=机身振动( navigator.vibrate + 整机抖动 ) | 联动=两者
+ *   - 开机音（alertPlay）：系统事件，不受提示模式限制，仅受"开机音效开关"控制
+ *   - 来车播报（alertBroadcast）：受提示模式 + 提示长短 + 提示音规范控制
+ * ------------------------------------------------------------------------ */
+const MELODIES = {
+  key:       [[2700, 35, 25]],                                                        // 按键音
+  confirm:   [[1046, 90, 40], [1568, 120, 30]],                                       // 确认音（上行双音）
+  cancel:    [[784, 90, 40], [523, 140, 30]],                                         // 取消音（下行双音）
+  back:      [[988, 70, 35], [784, 90, 30]],                                          // 返回音
+  start:     [[1319, 90, 50], [1976, 150, 40]],                                       // 开机音-标准
+  error:     [[330,180,80],[330,180,80],[330,180,80],[330,180,80],[330,180,80],[330,180,80],[330,180,80]], // 射频故障 7 声
+  alarmUp:   [[1568, 200, 80], [2093, 200, 80]],                                      // 上行来车
+  alarmDown: [[1046, 400, 80]],                                                       // 下行来车
+  alarmOther:[[1319, 200, 80]],                                                       // 其他 / 时间提醒
+};
+/* 开机音效三种风格（菜单：音效设置 → 开机音效风格） */
+const BOOT_MELODIES = [
+  MELODIES.start,                                                                     // 0=标准
+  [[1046,110,40],[1319,110,40],[1568,110,40],[1319,110,40],[1568,110,40],[2093,220,60]],// 1=欢快
+  [[523,150,60],[659,150,60],[784,150,60],[1046,300,80]],                             // 2=经典
+];
+const ALARM_FREQ = 2093;   // BUZZER_FREQ_ALARM（国标节拍蜂鸣频率）
+
+const snd = { on: true, ctx: null, oscs: [] };
+function audioCtx(){
+  if (!snd.ctx){
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return null;
+    try { snd.ctx = new AC(); } catch(e){ return null; }
+  }
+  if (snd.ctx.state === 'suspended') snd.ctx.resume();
+  return snd.ctx;
+}
+function stopSound(){
+  snd.oscs.forEach(o => { try { o.stop(); } catch(e){} });
+  snd.oscs = [];
+}
+/* 播放一段旋律（方波近似无源蜂鸣器；toneFreq>0 时整段改为单一音高） */
+function playMelody(notes, toneFreq){
+  if (!snd.on || window.__SILENT) return;
+  const ctx = audioCtx();
+  if (!ctx) return;
+  stopSound();
+  let t = ctx.currentTime + 0.02;
+  notes.forEach(n => {
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.type = 'square';
+    osc.frequency.value = toneFreq || n[0];
+    const on = n[1] / 1000, off = n[2] / 1000;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.15, t + 0.006);
+    g.gain.setValueAtTime(0.15, t + Math.max(on - 0.012, 0.008));
+    g.gain.exponentialRampToValueAtTime(0.0001, t + on);
+    osc.connect(g); g.connect(ctx.destination);
+    osc.start(t); osc.stop(t + on + 0.02);
+    snd.oscs.push(osc);
+    osc.onended = () => { const i = snd.oscs.indexOf(osc); if (i >= 0) snd.oscs.splice(i, 1); };
+    t += on + off;
+  });
+}
+/* 震动反馈：navigator.vibrate（移动端）+ 整机抖动动画（桌面浏览器） */
+let shakeTimer = null;
+function shakeDevice(ms){
+  const chassis = document.getElementById('chassis');
+  if (!chassis) return;
+  chassis.classList.remove('shaking');
+  // 强制回流，确保连续两次震动能重新触发动画
+  void chassis.offsetWidth;
+  chassis.classList.add('shaking');
+  clearTimeout(shakeTimer);
+  // 电机持续振动的时间与震动提示时长一致（上限 2.6 秒，避免长时间晃动）
+  shakeTimer = setTimeout(() => chassis.classList.remove('shaking'),
+                           Math.min(2600, Math.max(300, ms)));
+}
+function vibrate(ms){
+  if (!snd.on || window.__SILENT) return;
+  // 提示模式为"震动"或"联动"时，整机做抖动表现
+  if (cfg.anc_mode === 2 || cfg.anc_mode === 3) shakeDevice(ms);
+  if (!navigator.vibrate) return;
+  try { navigator.vibrate(ms); } catch(e){}
+}
+/* 人机交互提示（对应 alertUi：按键/确认/返回，受提示模式控制） */
+function uiFeedback(kind){
+  const m = cfg.anc_mode;
+  if (m === 0) return;                                    // 静默
+  if (m === 1) playMelody(MELODIES[kind] || MELODIES.key);  // 仅声音
+  else if (m === 2) vibrate(80);                          // 仅振动
+  else { playMelody(MELODIES[kind] || MELODIES.key); vibrate(80); }  // 声音+振动
+}
+/* 开机音效（对应 alertPlay：不受提示模式限制） */
+function playBootSound(){
+  if (!cfg.boot_sound_en) return;
+  playMelody(BOOT_MELODIES[(cfg.boot_sound_type >= 0 && cfg.boot_sound_type <= 2) ? cfg.boot_sound_type : 0]);
+}
+/* 来车预警播报（对应 alertBroadcast：方向 3=上行 1=下行 其他=时间/无效车次） */
+function broadcastFeedback(dir){
+  const m = cfg.anc_mode;
+  if (m === 0) return;                                    // 静默模式不播报
+  const useBz = (m === 1 || m === 3);
+  const useMb = (m === 2 || m === 3);
+  let notes;
+  if (cfg.alert_std_mode === 1){
+    /* 国标 TB/T3504 附录 A：上行=4 段长音；下行=短+长交替 4 组；其他=3 次密集短鸣 */
+    if (dir === 3)      notes = [[ALARM_FREQ,1000,300],[ALARM_FREQ,1000,300],[ALARM_FREQ,1000,300],[ALARM_FREQ,1000,0]];
+    else if (dir === 1) { notes = []; for (let i = 0; i < 4; i++){ notes.push([ALARM_FREQ,300,300]); notes.push([ALARM_FREQ,1000, i < 3 ? 300 : 0]); } }
+    else                notes = [[ALARM_FREQ,300,200],[ALARM_FREQ,300,200],[ALARM_FREQ,300,0]];
+  } else {
+    /* 非标：上行/下行旋律；提示长短=长 时，节拍时长放大 4 倍 */
+    const k = cfg.longAnc ? 4 : 1;
+    const base = (dir === 3) ? MELODIES.alarmUp : (dir === 1) ? MELODIES.alarmDown : MELODIES.alarmOther;
+    notes = base.map(n => [n[0], n[1] * k, n[2]]);
+  }
+  if (useBz) playMelody(notes);
+  if (useMb) vibrate(notes.reduce((s, n) => s + n[1] + n[2], 0));
+}
+
+/* ---------- 4. 画布与 TFT_eSPI 兼容层 ---------- */
+const cv  = document.getElementById('screen');
+cv.width  = SCREEN_W * SCALE;
+cv.height = SCREEN_H * SCALE;
+const ctx = cv.getContext('2d');
+ctx.scale(SCALE, SCALE);
+ctx.imageSmoothingEnabled = false;
+
+function rgb565(c){
+  const r = ((c >> 11) & 0x1F) * 255 / 31;
+  const g = ((c >> 5)  & 0x3F) * 255 / 63;
+  const b = (c & 0x1F) * 255 / 31;
+  return 'rgb(' + Math.round(r) + ',' + Math.round(g) + ',' + Math.round(b) + ')';
+}
+
+const tft = {
+  font: FONT_HMOS,
+  fg: WHITE,
+  bg: BLACK,
+  cx: 0,
+  cy: 0,
+
+  loadFont(f){ this.font = f; },
+  setTextColor(fg, bg){ this.fg = fg; this.bg = bg; },
+  setCursor(x,y){ this.cx = x; this.cy = y; },
+  fillScreen(c){ ctx.fillStyle = rgb565(c); ctx.fillRect(0,0,SCREEN_W,SCREEN_H); },
+  fillRect(x,y,w,h,c){ ctx.fillStyle = rgb565(c); ctx.fillRect(x,y,w,h); },
+  drawRect(x,y,w,h,c){ ctx.strokeStyle = rgb565(c); ctx.lineWidth = 1; ctx.strokeRect(x+0.5,y+0.5,w-1,h-1); },
+  drawFastHLine(x,y,w,c){ ctx.fillStyle = rgb565(c); ctx.fillRect(x,y,w,1); },
+  drawFastVLine(x,y,h,c){ ctx.fillStyle = rgb565(c); ctx.fillRect(x,y,1,h); },
+  drawLine(x1,y1,x2,y2,c){
+    ctx.strokeStyle = rgb565(c); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(x1+0.5,y1+0.5); ctx.lineTo(x2+0.5,y2+0.5); ctx.stroke();
+  },
+  roundRectPath(x,y,w,h,r){
+    r = Math.min(r, w/2, h/2);
+    ctx.beginPath();
+    ctx.moveTo(x+r, y);
+    ctx.lineTo(x+w-r, y); ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+    ctx.lineTo(x+w, y+h-r); ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+    ctx.lineTo(x+r, y+h); ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+    ctx.lineTo(x, y+r); ctx.quadraticCurveTo(x, y, x+r, y);
+    ctx.closePath();
+  },
+  fillRoundRect(x,y,w,h,r,c){ ctx.fillStyle = rgb565(c); this.roundRectPath(x,y,w,h,r); ctx.fill(); },
+  drawRoundRect(x,y,w,h,r,c){ ctx.strokeStyle = rgb565(c); ctx.lineWidth = 1; this.roundRectPath(x+0.5,y+0.5,w-1,h-1,r); ctx.stroke(); },
+  textWidth(s){ ctx.font = this.font + 'px ' + FONT_FAMILY; return ctx.measureText(String(s)).width; },
+  _draw(x, y, s){
+    ctx.font = this.font + 'px ' + FONT_FAMILY;
+    ctx.textBaseline = 'top';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = rgb565(this.fg);
+    ctx.fillText(String(s), x, y);
+  },
+  drawString(s, x, y){ this._draw(x, y, s); },
+  print(s){ this._draw(this.cx, this.cy, s); this.cx += this.textWidth(s); },
+};
+
+/* 便捷着色函数：等价于 C 端的 tft.setTextColor(X, BACK_COLOR, true) */
+const t = {
+  top(){    tft.setTextColor(C.TOP,    C.BACK); },
+  bottom(){ tft.setTextColor(C.BOTTOM, C.BACK); },
+  title(){  tft.setTextColor(C.TITLE,  C.BACK); },
+  text(){   tft.setTextColor(C.TEXT,   C.BACK); },
+  up(){     tft.setTextColor(C.UP,     C.BACK); },
+  down(){   tft.setTextColor(C.DOWN,   C.BACK); },
+  other(){  tft.setTextColor(C.OTHER,  C.BACK); },
+  batt(){   tft.setTextColor(C.BATT,   C.BACK); },
+};
+
+/* 当前生效的主题色 */
+let C = {};
+function applyTheme(i){
+  const th = THEMES[i] || THEMES[0];
+  C = {
+    BACK: th.BACK, TOP: th.TOP, BOTTOM: th.BOTTOM, BATT: th.BATT,
+    TITLE: th.TITLE, TEXT: th.TEXT, UP: th.UP, DOWN: th.DOWN, OTHER: th.OTHER,
+    TOWER_L: th.TOWER_L, TOWER_M: th.TOWER_M, TOWER_H: th.TOWER_H,
+  };
+}
+applyTheme(cfg.display_style);
+
+/* ---------- 5. 电量曲线拟合（src/ScreenWrapper.cpp） ---------- */
+function interpolate(x, x0, x1, y0, y1){ return y0 + (x - x0) * (y1 - y0) / (x1 - x0); }
+function getBatteryLevel(v){
+  const xs = [4.15,4.11,4.08,3.93,3.87,3.82,3.79,3.77,3.73,3.70,3.68,3.50,2.50];
+  const ys = [100,90,80,70,60,50,40,30,20,15,10,5,0];
+  if (v >= xs[0]) return 100;
+  if (v <= xs[xs.length-1]) return 0;
+  let i = 0;
+  while (i < xs.length - 1 && v < xs[i]) i++;
+  return interpolate(v, xs[i-1], xs[i], ys[i-1], ys[i]);
+}
+
+/* ---------- 6. 列车类型分类（src/ScreenWrapper.cpp: classifyTrain） ----------
+ * version: 1=旧版分类规则, 2=新版规则(铁运〔2026〕74号《列车运行图编制管理规则》)
+ * 与固件逐条对应：两位特殊字头新旧版统一；单字头按版本分支；纯数字车次新旧版共用。 */
+function classifyTrain(cls, num, version){
+  cls = String(cls || '--').replace(/ /g, '').toUpperCase();
+  let cleaned = '';
+  for (const ch of String(num)) if (ch >= '0' && ch <= '9') cleaned += ch;
+  if (!cleaned.length) return '----';
+  const n = parseInt(cleaned, 10);
+  const ver = (version === 1) ? 1 : 2;
+
+  // ===== 两位特殊字头：新旧版统一 =====
+  if (cls.length >= 2){
+    const m2u = {
+      'SY':'试验列车','AX':'按需行包','AB':'按需班列','DJ':'动检/确认车','DH':'货运动车组',
+      '0J':'动检回送','00':'回送列车','SH':'动车组调车','HX':'和谐机车','HZ':'机车出入库',
+      'JC':'检测列车','KJ':'机辆巡检列车'
+    };
+    if (m2u[cls]) return m2u[cls];
+    if (ver >= 2){
+      // 新版：细分0开头回送、F开头折返（铁运〔2026〕74号）
+      const m2n = {
+        '0X':'新高速动车回送','0G':'高速动车回送','0T':'特快动车回送','0K':'快速动车回送',
+        '0D':'动车组回送','0C':'城际动车回送','0S':'市郊列车回送',
+        'FX':'新高速动车折返','FG':'高速动车折返','FT':'特快动车折返','FK':'快速动车折返',
+        'FD':'动车组折返','FC':'城际动车折返','FS':'市郊列车折返',
+        '0N':'N字头车底回送','0V':'V字头车底回送','0Z':'Z字头车底回送',
+        'FN':'N字头列车折返','FV':'V字头列车折返','FZ':'Z字头列车折返'
+      };
+      if (m2n[cls]) return m2n[cls];
+      if (cls.startsWith('0')) return '回送列车';
+      if (cls.startsWith('F')) return '折返列车';
+    } else {
+      // 旧版：F开头折返、0开头回送按既有名称
+      const m2o = {
+        'FK':'快速列车折返','FZ':'直达列车折返','FT':'特快列车折返','FD':'动车组折返',
+        'FG':'高速动车折返','FS':'市郊列车折返','FC':'城际列车折返',
+        '0K':'快速列车回送','0Z':'直达列车回送','0T':'特快列车回送','0D':'动车组回送',
+        '0G':'高速动车回送','0S':'市郊列车回送','0C':'城际列车回送'
+      };
+      if (m2o[cls]) return m2o[cls];
+      if (cls.startsWith('0')) return '回送列车';
+      if (cls.startsWith('F')) return '折返列车';
+    }
+  }
+
+  if (ver >= 2){
+    // ===== 新版规则（铁运〔2026〕74号）=====
+    if (cls === 'X') return '新高速动车组';
+    if (cls === 'G'){
+      if (n >= 1 && n <= 4998) return '直通高速动车';
+      if (n >= 5001 && n <= 9998) return '管内高速动车';
+      return '高速动车组';
+    }
+    if (cls === 'T'){
+      if (n >= 1 && n <= 4998) return '直通特快动车';
+      if (n >= 5001 && n <= 9998) return '管内特快动车';
+      return '特快动车组';
+    }
+    if (cls === 'K'){
+      if (n >= 1 && n <= 4998) return '直通快速动车';
+      if (n >= 5001 && n <= 9998) return '管内快速动车';
+      return '快速动车组';
+    }
+    if (cls === 'D'){
+      if (n >= 2001 && n <= 2998){
+        if (n >= 2001 && n <= 2498) return '直通动集动车';
+        if (n >= 2501 && n <= 2998) return '管内动集动车';
+        return '200km/h动集动车';
+      } else {
+        if (n >= 1 && n <= 1998) return '直通动集动车';
+        if (n >= 3001 && n <= 9998) return '管内动集动车';
+        return '160km/h动集动车';
+      }
+    }
+    if (cls === 'C') return (n >= 1 && n <= 2998) ? '城际动车' : '其他城际动车';
+    if (cls === 'S') return (n >= 1 && n <= 2998) ? '市郊客车' : '其他市郊列车';
+    if (cls === 'Z'){
+      if (n >= 1 && n <= 998) return '直通客车';
+      if (n >= 1001 && n <= 1998) return '管内客车';
+      return '160km/h客车';
+    }
+    if (cls === 'N'){
+      if (n >= 1 && n <= 998) return '直通客车';
+      if (n >= 1001 && n <= 1998) return '管内客车';
+      return '140km/h客车';
+    }
+    if (cls === 'V'){
+      if (n >= 1 && n <= 2998) return '直通快速客车';
+      if (n >= 3001 && n <= 5998) return '管内快速客车';
+      if (n >= 6001 && n <= 6498) return '直通普通客车';
+      if (n >= 6501 && n <= 6998) return '管内普通客车';
+      if (n >= 7001 && n <= 7498) return '直通普通慢车';
+      if (n >= 7501 && n <= 7998) return '管内普通慢车';
+      return '旅客列车';
+    }
+    if (cls === 'Y'){
+      if (n >= 1 && n <= 998){
+        if (n >= 1 && n <= 98) return '直通旅游专线';
+        if (n >= 101 && n <= 298) return '管内旅游专线';
+        if (n >= 301 && n <= 598) return '直通旅游专线';
+        if (n >= 601 && n <= 998) return '管内旅游专线';
+        return '旅游专线列车';
+      }
+      if (n >= 1001 && n <= 1998) return '直通图定旅游';
+      if (n >= 2001 && n <= 2998) return '管内图定旅游';
+      if (n >= 1001 && n <= 9998) return '图定旅游专列';
+      return '旅游列车';
+    }
+    if (cls === 'L') return '临时列车';
+    if (cls === '0') return '回送列车';
+    if (cls === 'F') return '折返列车';
+    if (cls === 'B'){
+      if (n >= 1 && n < 199) return '特快货物班列';
+      if (n >= 201 && n < 398) return '快速货物班列';
+      if (n >= 401 && n < 998) return '货物快运列车';
+      if (n >= 2401 && n <= 2430) return '哈局行包';
+      if (n >= 2431 && n <= 2480) return '沈局行包';
+      if (n >= 2481 && n <= 2510) return '京局行包';
+      if (n >= 2511 && n <= 2540) return '太局行包';
+      if (n >= 2541 && n <= 2570) return '呼局行包';
+      if (n >= 2571 && n <= 2600) return '郑局行包';
+      if (n >= 2601 && n <= 2630) return '武局行包';
+      if (n >= 2631 && n <= 2660) return '西局行包';
+      if (n >= 2661 && n <= 2690) return '济局行包';
+      if (n >= 2691 && n <= 2740) return '上局行包';
+      if (n >= 2741 && n <= 2770) return '南局行包';
+      if (n >= 2771 && n <= 2810) return '广铁行包';
+      if (n >= 2811 && n <= 2840) return '南局行包';
+      if (n >= 2841 && n <= 2890) return '成局行包';
+      if (n >= 2891 && n <= 2920) return '昆局行包';
+      if (n >= 2921 && n <= 2950) return '兰局行包';
+      if (n >= 2951 && n <= 2970) return '乌局行包';
+      if (n >= 2971 && n <= 2990) return '青藏行包';
+      if (n >= 8001 && n <= 8998) return '中亚/欧班列';
+      if (n >= 9001 && n <= 9500) return '中亚集装箱';
+      if (n >= 9501 && n <= 9998) return '水铁联运';
+      if (n >= 88001 && n <= 88998) return '远程技术直达';
+      return '一般行包货物';
+    }
+  } else {
+    // ===== 旧版分类规则 =====
+    if (cls === 'G'){
+      if (n >= 1 && n < 4001) return '直通高速动车组';
+      if (n >= 4001 && n < 4998) return '直通高速动车 临';
+      if (n >= 5001 && n < 9000) return '管内高速动车组';
+      if (n >= 9001 && n < 9998) return '管内高速动车 临';
+      return '高速动车组';
+    }
+    if (cls === 'D'){
+      if (n >= 1 && n < 4001) return '直通动车组';
+      if (n >= 4001 && n < 4998) return '直通动车组 临';
+      if (n >= 5001 && n < 9000) return '管内动车组';
+      if (n >= 9001 && n < 9998) return '管内动车组 临';
+      return '动车组列车';
+    }
+    if (cls === 'C'){
+      if (n >= 1 && n < 9001) return '城际动车组';
+      if (n >= 9001 && n < 9998) return '城际动车组 临';
+      return '城际动车组';
+    }
+    if (cls === 'Z'){
+      if (n >= 1 && n < 4001) return '直通直达特快';
+      if (n >= 4001 && n < 4998) return '直通直达 临';
+      if (n >= 5001 && n < 9000) return '管内直达特快';
+      if (n >= 9001 && n < 9998) return '管内直达 临';
+      return '直达特快列车';
+    }
+    if (cls === 'T'){
+      if (n >= 1 && n < 3001) return '直通特快';
+      if (n >= 3001 && n < 3998) return '直通特快 临';
+      if (n >= 4001 && n < 4998) return '管内特快 临';
+      if (n >= 4998 && n < 9998) return '管内特快';
+      return '特快列车';
+    }
+    if (cls === 'K'){
+      if (n >= 1 && n < 4001) return '直通快速列车';
+      if (n >= 4001 && n < 4998) return '直通快速 临';
+      if (n >= 5001 && n < 6998) return '管内快速 临';
+      if (n >= 6998 && n < 9998) return '管内快速列车';
+      return '快速列车';
+    }
+    if (cls === 'L'){
+      if (n >= 1 && n < 6998) return '直通临客';
+      if (n >= 7001 && n < 9998) return '管内临客';
+      return '临客列车';
+    }
+    if (cls === 'Y'){
+      if (n >= 1 && n < 498) return '直通旅游列车';
+      if (n >= 501 && n < 998) return '管内旅游列车';
+      return '旅游列车';
+    }
+    if (cls === 'S') return '市郊旅客列车';
+    if (cls === '0') return '回送列车';
+    if (cls === 'F') return '折返列车';
+    if (cls === 'X'){
+      if (n>=1&&n<199) return '特快货物班列';
+      if (n>=201&&n<398) return '快速货物班列';
+      if (n>=401&&n<998) return '货物快运列车';
+      if (n>=2401&&n<=2430) return '哈局行包';
+      if (n>=2431&&n<=2480) return '沈局行包';
+      if (n>=2481&&n<=2510) return '京局行包';
+      if (n>=2511&&n<=2540) return '太局行包';
+      if (n>=2541&&n<=2570) return '呼局行包';
+      if (n>=2571&&n<=2600) return '郑局行包';
+      if (n>=2601&&n<=2630) return '武局行包';
+      if (n>=2631&&n<=2660) return '西局行包';
+      if (n>=2661&&n<=2690) return '济局行包';
+      if (n>=2691&&n<=2740) return '上局行包';
+      if (n>=2741&&n<=2770) return '南局行包';
+      if (n>=2771&&n<=2810) return '广铁行包';
+      if (n>=2811&&n<=2840) return '南局行包';
+      if (n>=2841&&n<=2890) return '成局行包';
+      if (n>=2891&&n<=2920) return '昆局行包';
+      if (n>=2921&&n<=2950) return '兰局行包';
+      if (n>=2951&&n<=2970) return '乌局行包';
+      if (n>=2971&&n<=2990) return '青藏行包';
+      if (n>=8001&&n<=8998) return '中欧班列';
+      if (n>=9001&&n<=9500) return '中亚集装箱';
+      if (n>=9501&&n<=9998) return '水铁联运';
+      if (n>=88001&&n<=88998) return '远程技术直达';
+      return '一般行包货物';
+    }
+  }
+
+  // ===== 纯数字车次分类（客普、货运、单机、路用等，新旧版共用）=====
+  if (n >= 1001 && n <= 3001) return '直通普通列车';
+  if (n >= 3001 && n <= 3998) return '直通普通列车 临';
+  if (n >= 4001 && n <= 5998) return '管内普通客车';
+  if (n >= 6001 && n <= 6198) return '直通普通慢车';
+  if (n >= 6201 && n <= 7598) return '管内普通慢车';
+  if (n >= 7601 && n <= 8998) return '通勤列车';
+  if (n >= 10001 && n <= 19998) return '技术直达列车';
+  if (n >= 20001 && n <= 29998) return '直通货物列车';
+  if (n >= 30001 && n <= 39998) return '区段货物列车';
+  if (n >= 40001 && n <= 44998) return '摘挂列车';
+  if (n >= 45001 && n <= 49998) return '小运转列车';
+  if (n >= 50001 && n <= 50998) return '客车单机';
+  if (n >= 51001 && n <= 51998) return '货车单机';
+  if (n >= 52001 && n <= 52998) return '小运转单机';
+  if (n >= 53001 && n <= 54998) return '补机';
+  if (n >= 55001 && n <= 55998) return '试运转列车';
+  if (n >= 56001 && n <= 56998) return '轻油轨道车';
+  if (n >= 57001 && n <= 57998) return '路用列车';
+  if (n >= 58101 && n <= 58998) return '救援列车';
+  if (n >= 60001 && n <= 69998) return '企业自备车';
+  if (n >= 70001 && n <= 70998) return '超限货物列车';
+  if (n >= 71001 && n <= 72998) return '重载货物列车';
+  if (n >= 73001 && n <= 74998) return '保温列车';
+  if (n >= 79001 && n <= 79040) return '哈局点对点';
+  if (n >= 79041 && n <= 79140) return '沈局点对点';
+  if (n >= 79141 && n <= 79210) return '京局点对点';
+  if (n >= 79211 && n <= 79250) return '太局点对点';
+  if (n >= 79251 && n <= 79290) return '呼局点对点';
+  if (n >= 79291 && n <= 79340) return '郑局点对点';
+  if (n >= 79341 && n <= 79390) return '武局点对点';
+  if (n >= 79391 && n <= 79430) return '西局点对点';
+  if (n >= 79431 && n <= 79520) return '济局点对点';
+  if (n >= 79521 && n <= 79610) return '上局点对点';
+  if (n >= 79611 && n <= 79670) return '南局点对点';
+  if (n >= 79671 && n <= 79740) return '广铁点对点';
+  if (n >= 79741 && n <= 79780) return '南局点对点';
+  if (n >= 79781 && n <= 79830) return '成局点对点';
+  if (n >= 79831 && n <= 79870) return '昆局点对点';
+  if (n >= 79871 && n <= 79920) return '兰局点对点';
+  if (n >= 79921 && n <= 79980) return '乌局点对点';
+  if (n >= 79981 && n <= 79998) return '青藏点对点';
+  if (n >= 80001 && n <= 81748) return '货运五定班列';
+  if (n >= 81751 && n <= 81998) return '快运货物列车';
+  if (n >= 82001 && n <= 84998) return '煤炭直达列车';
+  if (n >= 85001 && n <= 85998) return '石油直达列车';
+  if (n >= 86001 && n <= 86998) return '始发直达列车';
+  if (n >= 87001 && n <= 89999) return '空车直达列车';
+  if (n >= 99000 && n <= 99999) return '库检测试机车';
+  return '普通列车';
+}
+
+/* 车次等级徽标文字（src/ScreenWrapper.cpp: getTrainGrade，与分类规则对应）：
+ * 客车→速度等级数字；货→"货"；班列/行包→"行包"；动货→"动货"；
+ * 特殊作业列车（回送/折返/试验/检测/机车出入库等）不显示徽标，返回空串。 */
+function getTrainGrade(cls, num){
+  cls = String(cls || '--').replace(/ /g, '').toUpperCase();
+  let s = '';
+  for (const ch of String(num)) if (ch >= '0' && ch <= '9') s += ch;
+  const v = s.length ? parseInt(s, 10) : 0;
+  if (cls.length >= 2){
+    if (['SY','AX','DJ','00','0D','0G','0J','0C','0Z','0T','0K',
+         'FK','FZ','FT','FD','FG','FS','FC','SH','HX','HZ','FX','JC','KJ'].includes(cls)) return '';
+  }
+  if (cls === 'B') return '行包';
+  if (cls === 'X') return '350';
+  if (cls === 'G') return '350';
+  if (cls === 'T') return '300';
+  if (cls === 'K') return '250';
+  if (cls === 'DH') return '动货';
+  if (cls === 'D'){
+    if (v > 9999) return '动货';
+    if (v >= 2001 && v <= 2998) return '200';
+    return '160';
+  }
+  if (cls === 'C') return '200';
+  if (cls === 'S') return '160';
+  if (cls === 'Z') return '160';
+  if (cls === 'N') return '140';
+  if (cls === 'V') return '120';
+  if (cls === 'Y') return (v >= 1 && v <= 298) ? '160' : '120';
+  if (cls === 'L') return '120';
+  if (v === 0) return '';
+  if (v <= 8998) return '120';
+  if (v >= 10000) return '货';
+  return '';
+}
+
+/* 等级徽标背景色（默认主题按速度从红到紫；其他主题用上行框颜色） */
+const GRADE_COLORS = { '350':0xF800,'300':0xFBA0,'250':0xFD20,'200':0xFF00,'160':0x07E0,
+                       '140':0x07FF,'120':0x051F,'动货':0xB81F };
+function getTrainGradeColor(cls, num){
+  if (cfg.display_style !== 0) return C.UP;
+  const g = getTrainGrade(cls, num);
+  if (g === '货' || g === '行包') return 0x7BEF;
+  return GRADE_COLORS[g] !== undefined ? GRADE_COLORS[g] : 0x7BEF;
+}
+
+/* 绘制车次等级圆角徽标（需已载入 HMOS 字体） */
+function drawTrainGradeBadge(x, baselineY, cls, num){
+  const g = getTrainGrade(cls, num);
+  if (!g.length) return 0;
+  const padX = 6, bh = 22;
+  const tw = tft.textWidth(g);
+  const bw = tw + padX * 2;
+  const bg = getTrainGradeColor(cls, num);
+  tft.fillRoundRect(x, baselineY - 1, bw, bh, 4, bg);
+  tft.setTextColor(0x0000, bg, true);
+  tft.setCursor(x + padX, baselineY);
+  tft.print(g);
+  tft.setTextColor(C.TEXT, C.BACK, true);
+  return bw;
+}
+
+/* 音调预设频率（src/alert.cpp: tonePresetFreq）：0=高音 1=中音 2=低音 3=默认旋律 */
+const TONE_PRESET_FREQ = [2093, 1319, 659, 0];
+const TONE_PRESET_NAMES = ['高音', '中音', '低音', '默认'];
+const SND_TONE_KEYS = ['key','confirm','cancel','back','error','alarmUp','alarmDown'];
+function toneFreqOf(tone){
+  const f = TONE_PRESET_FREQ[tone];
+  return f ? f : 0;
+}
+
+/* ---------- 7. 示例历史消息 ---------- */
+let history = [
+  {line:1,  type:1, cls:'G',   train:'89',    dir:3, speed:'348', pos:'1234.5', route:'京广高铁', ltype:'CR400AF', loco:'23502001', time:'20:30'},
+  {line:2,  type:1, cls:'D',   train:'3106',  dir:1, speed:'201', pos:'1188.3', route:'沪宁城际', ltype:'CRH2A',   loco:'23502045', time:'20:29'},
+  {line:3,  type:0, cls:'--',  train:'57003', dir:3, speed:'68',  pos:'45.2',   route:'----',     ltype:'HXD1D',   loco:'23500063', time:'20:27'},
+  {line:4,  type:1, cls:'K',   train:'1268',  dir:1, speed:'96',  pos:'2107.9', route:'京九线',   ltype:'韶山9',   loco:'23500041', time:'20:25'},
+  {line:5,  type:1, cls:'Z',   train:'18',    dir:3, speed:'158', pos:'33.6',   route:'京哈线',   ltype:'HXD3D',   loco:'23500058', time:'20:22'},
+  {line:6,  type:1, cls:'T',  train:'232',   dir:1, speed:'121', pos:'886.4',  route:'陇海线',   ltype:'HXD1D',   loco:'23500192', time:'20:19'},
+  {line:7,  type:0, cls:'--',  train:'40051', dir:1, speed:'55',  pos:'12.8',   route:'----',     ltype:'东风8B',  loco:'23505135', time:'20:16'},
+  {line:8,  type:1, cls:'C',   train:'2002',  dir:3, speed:'302', pos:'77.1',   route:'京津城际', ltype:'CR400BF', loco:'23505033', time:'20:14'},
+  {line:9,  type:1, cls:'X',   train:'8805',  dir:3, speed:'91',  pos:'156.7',  route:'京广线',   ltype:'HXD2B',   loco:'23500124', time:'20:11'},
+  {line:10, type:2, cls:'--',  train:'-----',  dir:-1,speed:'---', pos:'----.-',  route:'----',     ltype:'',        loco:'-----',    time:'20:00'},
+  {line:11, type:1, cls:'G',   train:'1976',  dir:1, speed:'310', pos:'942.0',  route:'徐兰高铁', ltype:'CRH380B', loco:'23503571', time:'19:57'},
+  {line:12, type:1, cls:'K',   train:'458',    dir:3, speed:'104', pos:'66.3',   route:'焦柳线',   ltype:'韶山7E',  loco:'23500072', time:'19:54'},
+];
+
+let rx = { rssi: -78.4 };
+
+/* ---------- 8. 状态机 ---------- */
+const S = {
+  CLOSED:'MENU_CLOSED', RX_INFO:'MENU_RX_INFO', SETTINGS:'MENU_SETTINGS', ABOUT:'MENU_ABOUT',
+  FREQ:'MENU_FREQ', ALARM_M:'ALARM_M_SETTINGS', SOUND_SET:'ALARM_SOUND_SETTINGS',
+  TF_CONFIRM:'MENU_TF_CONFIRM', INDEX:'MENU_INDEX',
+  KILO_INDEX:'MENU_KILO_INDEX', INDEX_INPUT:'MENU_INDEX_INPUT', KILO_INDEX_INPUT:'MENU_KILO_INDEX_INPUT',
+  BRIGHTNESS:'BRIGHTNESS_SETTINGS', ALAR_CONDT:'ALAR_CONDT', ALAR_KILO_CONDT:'ALAR_KILO_CONDT',
+  THEME:'THEME', REBOOT:'REBOOT', FORMAT_FS:'FORMAT_FS', FORMAT_SETTINGS:'FORMAT_SETTINGS',
+  QUICK_VIEW:'MENU_QUICK_VIEW', QV_MODE:'MENU_QV_MODE', TIME_SET:'MENU_TIME_SET',
+  TIME_SET_INPUT:'MENU_TIME_SET_INPUT', SYSTEM_STATUS:'MENU_SYSTEM_STATUS',
+};
+
+const st = {
+  page: S.CLOSED,
+  sub: 0,              // MENU_SETTINGS: -1/-2/-3；其它页为页码
+  sel: 0,
+  items: new Array(10).fill(''),
+  isMenu: false,
+  isMsg: false,
+  lines: 2000,
+  qvOffset: 0,
+  timeDigits: [26,10,13,20,30,0],
+  alwaysNew: true,     // 开机未收到新消息 → 监听界面
+  rxInfoPage: 1,
+  msgTitle: '', msgBody: '',
+  confirmTitle: '', confirmBody: '',
+  charging: false,
+};
+
+function boot(){
+  st.page = S.CLOSED;
+  st.isMenu = false;
+  st.alwaysNew = true;
+  renderInitComp();
+  setTimeout(()=>{ render(); }, 900);
+  setTimeout(playBootSound, 950);   // 开机音效（不受提示模式限制，可关）
+}
+
+/* ---------- 9. 图标绘制 ---------- */
+function drawBatteryIcon(x, y, pct){
+  pct = Math.max(0, Math.min(100, pct));
+  const totalW = 35, totalH = 16, bodyW = 32, headW = 3, headH = 8;
+  const pad = 2, innerW = bodyW - pad*2, innerH = totalH - pad*2;
+  let frameColor, fillColor, lowX = false;
+  if (pct < 5){ lowX = true; frameColor = C.DOWN; fillColor = C.DOWN; }
+  else if (pct < 20){ frameColor = C.DOWN; fillColor = C.DOWN; }
+  else if (pct < 40){ frameColor = C.UP; fillColor = C.TOP; }
+  else { frameColor = C.UP; fillColor = C.UP; }
+
+  tft.fillRect(x, y, totalW, totalH, C.BACK);
+  const headX = x + bodyW, headY = y + (totalH - headH)/2;
+  tft.fillRect(headX, headY, headW, headH, frameColor);
+  tft.drawRoundRect(x, y, bodyW, totalH, 4, frameColor);
+
+  if (lowX){
+    const x1 = x + pad, y1 = y + pad, x2 = x + bodyW - pad - 1, y2 = y + totalH - pad - 1;
+    tft.drawLine(x1, y1, x2, y2, C.DOWN);
+    tft.drawLine(x2, y1, x1, y2, C.DOWN);
+  } else {
+    let fw = Math.floor(innerW * pct / 100);
+    if (pct > 0 && fw === 0) fw = 1;
+    if (fw > innerW) fw = innerW;
+    if (fw > 0) tft.fillRect(x + pad, y + pad, fw, innerH, fillColor);
+  }
+}
+
+function drawSignalTower(x, y, rssi){
+  const minRSSI = -120, maxRSSI = -70;
+  let bars;
+  if (rssi < minRSSI) bars = 0;
+  else if (rssi >= maxRSSI) bars = 5;
+  else bars = Math.round((rssi - minRSSI) * 5 / (maxRSSI - minRSSI));
+
+  let fc = (bars <= 1) ? C.TOWER_L : (bars <= 3) ? C.TOWER_M : C.TOWER_H;
+  const bw = 14, bh = [4,8,12,16,20];
+  tft.fillRect(x, y, 94, 21, C.BACK);
+  for (let i = 0; i < 5; i++){
+    const bx = x + i*(bw+2);
+    const by = y + (21 - bh[i]);
+    if (i < bars) tft.fillRoundRect(bx, by, bw, bh[i], 3, fc);
+    else tft.drawRoundRect(bx, by, bw, bh[i], 3, fc);
+  }
+}
+
+/* ---------- 10. 顶栏 / 底栏（updateInfo） ---------- */
+function drawTopBar(){
+  tft.loadFont(FONT_HMOS);
+  tft.setTextColor(C.TOP, C.BACK);
+  tft.setCursor(5,5);
+  const d = new Date();
+  const wd = ['日','一','二','三','四','五','六'][d.getDay()];
+  tft.print(
+    d.getFullYear() + '/' +
+    String(d.getMonth()+1).padStart(2,'0') + '/' +
+    String(d.getDate()).padStart(2,'0') + ' ' + wd + ' ' +
+    String(d.getHours()).padStart(2,'0') + ':' +
+    String(d.getMinutes()).padStart(2,'0') + '    '
+  );
+
+  if (cfg.enable_arrivaltime_disp && cfg.enable_kilo_flit){
+    tft.fillRect(215, 0, 105, 26, C.BACK);
+    tft.setTextColor(C.TITLE, C.BACK);
+    tft.setCursor(220,5);
+    const a = arrivingTime();
+    if (a < 0) tft.print(' --分--秒');
+    else tft.print('  ' + String(Math.floor(a/60)).padStart(2,' ') + '分' + String(a%60).padStart(2,' ') + '秒 ');
+  } else if (sys.have_rtc){
+    tft.setTextColor(C.TITLE, C.BACK);
+    tft.setCursor(245,5);
+    tft.print('    ' + sys.rtc_temp + 'C  ');
+  } else {
+    tft.setTextColor(C.TITLE, C.BACK);
+    tft.setCursor(245,5);
+    tft.print('    --C ');
+  }
+}
+
+/* 右侧电池信息区（updateInfo 的 update bottom 段） */
+function drawBatteryArea(){
+  tft.fillRect(215, 210, 105, 30, C.BACK);
+  tft.setTextColor(C.BATT, C.BACK);
+  tft.loadFont(FONT_UI20);
+  const pct = getBatteryLevel(sys.voltage);
+  if (st.charging){
+    tft.setCursor(257, 217);
+    tft.print(sys.voltage.toFixed(1) + 'V' + String.fromCharCode(0x26A1));
+  } else {
+    drawBatteryIcon(275, 217, pct);
+    if (cfg.enable_powerSave){ tft.setCursor(310, 217); tft.print('*'); }
+    if (cfg.BATINFO_level === 0){
+      tft.setCursor(232, 217); tft.print(sys.voltage.toFixed(1) + 'V');
+    } else if (cfg.BATINFO_level === 1){
+      const s = String(Math.round(pct));
+      tft.setCursor(pct < 100 ? 230 : 218, 217);
+      tft.print(' ' + s + '%');
+    }
+  }
+  tft.loadFont(FONT_HMOS);
+}
+
+function drawBottomBar(){
+  tft.loadFont(FONT_HMOS);
+  tft.setTextColor(C.BOTTOM, C.BACK);
+  tft.fillRect(195, 215, 125, 25, C.BACK);
+
+  tft.setCursor(5, 216);
+  if (!sys.no_wifi){
+    tft.setTextColor(C.DOWN, C.BACK);
+    tft.print('NTP ');
+    tft.setTextColor(C.BOTTOM, C.BACK);
+    tft.setCursor(50, 216);
+    tft.print(ANC_MODE_NAMES[cfg.anc_mode]);
+    if (cfg.enable_kilo_flit){ tft.setTextColor(C.TITLE, C.BACK); tft.print(' [K]'); }
+    if (cfg.filt_none_msg || cfg.filt_usignTrain_msg || cfg.filt_old_msg || cfg.filt_LBJtime_msg){
+      tft.setTextColor(C.TOP, C.BACK); tft.print(' [C]');
+    }
+    if (!cfg.freq_correction){ tft.setTextColor(C.DOWN, C.BACK); tft.print(' [X]'); }
+  } else {
+    if (sys.voltage <= 3.5 && sys.voltage >= 3.3){
+      tft.fillRect(0, 215, 216, 25, C.BACK);
+      tft.print('低电量!');
+    } else {
+      tft.setCursor(5, 216); tft.print(' RX  ');
+      tft.setCursor(50, 216); tft.print(ANC_MODE_NAMES[cfg.anc_mode]);
+      if (cfg.enable_kilo_flit){ tft.setTextColor(C.TITLE, C.BACK); tft.print(' [K]'); }
+      if (cfg.filt_none_msg || cfg.filt_usignTrain_msg || cfg.filt_old_msg || cfg.filt_LBJtime_msg){
+        tft.setTextColor(C.TOP, C.BACK); tft.print(' [C]');
+      }
+      if (!cfg.freq_correction){ tft.setTextColor(C.DOWN, C.BACK); tft.print(' [X]'); }
+    }
+  }
+
+  drawBatteryArea();
+}
+
+/* 回看模式：顶栏显示 @ 接收时间 */
+function drawTopBarReview(d){
+  tft.loadFont(FONT_HMOS);
+  tft.setTextColor(C.TOP, C.BACK);
+  tft.setCursor(5,5);
+  const now = new Date();
+  const p = n => String(n).padStart(2,'0');
+  tft.print('@ ' + now.getFullYear() + '-' + p(now.getMonth()+1) + '-' + p(now.getDate()) +
+                ' ' + (d && d.time ? d.time : p(now.getHours()) + ':' + p(now.getMinutes())) +
+                '            ');
+  if (cfg.enable_arrivaltime_disp) tft.fillRect(224, 0, 96, 30, C.BACK);
+  tft.setTextColor(C.TITLE, C.BACK);
+  tft.setCursor(245,5);
+  tft.print('    ' + sys.rtc_temp + 'C ');
+}
+
+/* 回看模式：底栏显示 回看: NNNN/2K */
+function drawBottomBarReview(d){
+  tft.fillRect(0, 200, 218, 40, C.BACK);
+  tft.loadFont(FONT_HMOS);
+  tft.setTextColor(C.BOTTOM, C.BACK);
+  tft.setCursor(5, 216);
+  tft.print('回看: ' + String(d.line).padStart(4,'0') + '/2K');
+  drawBatteryArea();
+}
+
+/* ---------- 11. 主界面 ---------- */
+function arrivingTime(){
+  if (!cfg.enable_kilo_flit || !current || current.type === 2) return -1;
+  const f = parseFloat(current.pos);
+  if (isNaN(f)) return -1;
+  const d = Math.abs(cfg.m_kmTenths/10 - f);
+  const kmh = parseInt(String(current.speed).replace(/[^0-9]/g,''), 10) || 0;
+  if (kmh <= 0) return -1;
+  return Math.round(d / kmh * 3600);
+}
+
+let current = null;          // 当前显示的 LBJ 消息
+let reviewMode = false;      // 回看模式
+
+function renderInitComp(){
+  tft.fillScreen(C.BACK);
+  drawTopBar();
+  tft.setTextColor(C.BOTTOM, C.BACK);
+  tft.setCursor(5, 216);
+  tft.print(' Init... ');
+  // 右侧电池占位
+  tft.setTextColor(C.BATT, C.BACK);
+  tft.loadFont(FONT_UI20);
+  drawBatteryIcon(265, 217, getBatteryLevel(sys.voltage));
+  tft.setCursor(265, 217);
+  tft.print(' ' + String(Math.round(getBatteryLevel(sys.voltage))) + '%  ');
+  tft.loadFont(FONT_HMOS);
+}
+
+/* showListening() —— 等待接收消息 */
+function renderListening(){
+  tft.fillRect(0, 25, SCREEN_W, 190, C.BACK);
+  tft.loadFont(FONT_HMOS);
+  if (cfg.enable_kilo_flit){
+    tft.setTextColor(C.DOWN, C.BACK);
+    tft.setCursor(10, 60);
+    tft.print('[公里标过滤器已启用]');
+
+    tft.setCursor(10, 90);
+    tft.setTextColor(C.TITLE, C.BACK);
+    tft.print('行别条件: ');
+    let buf = ' ';
+    if (cfg.enable_UP_flit)   buf += '上行, ';
+    if (cfg.enable_DOWN_flit) buf += '下行, ';
+    buf += cfg.enable_departure_flit ? '仅接近' : '接近和离去';
+    tft.setTextColor(C.TEXT, C.BACK);
+    tft.print(buf);
+
+    tft.setCursor(10, 120);
+    tft.setTextColor(C.TITLE, C.BACK);
+    tft.print('位置距离: ');
+    tft.setTextColor(C.TEXT, C.BACK);
+    tft.print((cfg.m_kmTenths/10).toFixed(1) + ' K ');
+    tft.setTextColor(C.TOP, C.BACK);
+    tft.print('[' + KILO_LIMIT_ARRY[cfg.Kilo_limit_level].toFixed(1) + ' Km]');
+
+    tft.setTextColor(C.TEXT, C.BACK);
+    tft.setCursor(10, 150);
+    tft.print('等待接收消息......');
+  } else {
+    tft.setTextColor(C.TEXT, C.BACK);
+    tft.setCursor(10, 150);
+    tft.print('等待接收消息......');
+  }
+}
+
+/* showLBJ0() —— 传统车次 / 速度 / 公里标 */
+function renderLBJ0(d, r){
+  tft.setCursor(10, 40);
+  tft.loadFont(FONT_HMOS_28);
+  tft.fillRect(0, 25, SCREEN_W, 180, C.BACK);
+
+  tft.setTextColor(C.TITLE, C.BACK);
+  tft.print('车   次:  ');
+  tft.setTextColor(C.TEXT, C.BACK);
+  tft.print(String(d.train) + '  ');
+
+  if (d.dir === 3){
+    tft.fillRoundRect(218, 35, 62, 35, 5, C.UP);
+    tft.setTextColor(C.BACK, C.UP);
+    tft.setCursor(222, 40); tft.print('上行');
+  } else if (d.dir === 1){
+    tft.fillRoundRect(218, 35, 62, 35, 5, C.DOWN);
+    tft.setTextColor(C.BACK, C.DOWN);
+    tft.setCursor(222, 40); tft.print('下行');
+  } else {
+    tft.setTextColor(C.OTHER, C.BACK);
+    tft.print(String(d.dir));
+  }
+
+  tft.setCursor(10, 80);
+  tft.setTextColor(C.TITLE, C.BACK); tft.print('速   度:  ');
+  tft.setTextColor(C.TEXT, C.BACK);   tft.print(String(d.speed));
+  tft.setTextColor(C.TITLE, C.BACK);   tft.print(' km/h');
+
+  tft.setCursor(10, 120);
+  tft.setTextColor(C.TITLE, C.BACK); tft.print('公里标:  ');
+  tft.setTextColor(C.TEXT, C.BACK);   tft.print(String(d.pos));
+  tft.setTextColor(C.TITLE, C.BACK);   tft.print(' K');
+
+  tft.loadFont(FONT_HMOS);
+  if (cfg.train_type_display !== 0){
+    tft.setCursor(10, 160);
+    tft.setTextColor(C.TITLE, C.BACK); tft.print('类型: ');
+    tft.setTextColor(C.TEXT, C.BACK);
+    const t = classifyTrain('--', d.train, cfg.train_type_display);
+    tft.print(t);
+    // 等级徽标仅新版分类时启用
+    if (cfg.train_type_display === 2 && cfg.train_grade_display){
+      const tw = tft.textWidth(t);
+      drawTrainGradeBadge(10 + tft.textWidth('类型: ') + tw + 2, 160, '--', d.train);
+    }
+  }
+  if (cfg.signal_tower_display){
+    tft.setTextColor(C.TEXT, C.BACK);
+    const numStr = r.rssi.toFixed(1);
+    const numW = tft.textWidth(numStr);
+    tft.setCursor(229 + 39 - numW/2, 180);
+    tft.print(numStr);
+    drawSignalTower(229, 158, r.rssi);
+  }
+}
+
+/* showLBJ1() —— 新版混合预警 */
+function renderLBJ1(d, r){
+  tft.loadFont(FONT_HMOS_28);
+  tft.fillRect(0, 25, SCREEN_W, 180, C.BACK);
+
+  // 第一行 车次
+  tft.setTextColor(C.TITLE, C.BACK);
+  tft.setCursor(5, Y_LINE_1);
+  tft.print('车次: ');
+  tft.setTextColor(C.TEXT, C.BACK);
+  tft.print(String(d.cls) + String(d.train));
+
+  if (d.dir === 3){
+    tft.fillRoundRect(221, 25, 62, 36, 5, C.UP);
+    tft.setTextColor(C.BACK, C.UP);
+    tft.setCursor(225, Y_LINE_1); tft.print('上行');
+  } else if (d.dir === 1){
+    tft.fillRoundRect(221, 25, 62, 36, 5, C.DOWN);
+    tft.setTextColor(C.BACK, C.DOWN);
+    tft.setCursor(225, Y_LINE_1); tft.print('下行');
+  } else {
+    tft.setTextColor(C.BACK, C.OTHER);
+    tft.setCursor(225, Y_LINE_1); tft.print(String(d.dir));
+  }
+
+  // 第二行 速度 + 公里标
+  tft.setTextColor(C.TITLE, C.BACK);
+  tft.setCursor(5, Y_LINE_2);
+  tft.print('速: ');
+  tft.setTextColor(C.TEXT, C.BACK);
+  tft.print(String(d.speed));
+  tft.setTextColor(C.TITLE, C.BACK);
+  tft.print(' km/h');
+
+  tft.setCursor(192, Y_LINE_2);
+  tft.setTextColor(C.TEXT, C.BACK);
+  tft.print(' ' + String(d.pos));
+  tft.setTextColor(C.TITLE, C.BACK);
+  tft.print('K');
+
+  // 第三行 机车
+  tft.setCursor(5, Y_LINE_3);
+  const loco5 = String(d.loco).slice(-5);
+  if (String(d.ltype).length){
+    tft.setTextColor(C.TITLE, C.BACK); tft.print('车: ');
+    tft.setTextColor(C.TEXT, C.BACK);   tft.print(String(d.ltype) + '-' + loco5);
+  } else {
+    tft.setTextColor(C.TITLE, C.BACK); tft.print('号: ');
+    tft.setTextColor(C.TEXT, C.BACK);   tft.print(String(d.loco));
+  }
+
+  // 第四行 线路
+  tft.loadFont(FONT_HMOS);
+  tft.setCursor(5, Y_LINE_4);
+  tft.setTextColor(C.TITLE, C.BACK); tft.print('线路: ');
+  tft.setTextColor(C.TEXT, C.BACK);   tft.print(String(d.route));
+
+  if (cfg.train_type_display !== 0){
+    tft.setCursor(5, Y_LINE_5);
+    tft.setTextColor(C.TITLE, C.BACK); tft.print('类型: ');
+    tft.setTextColor(C.TEXT, C.BACK);
+    const t = classifyTrain(d.cls, d.train, cfg.train_type_display);
+    tft.print(t);
+    // 等级徽标仅新版分类时启用
+    if (cfg.train_type_display === 2 && cfg.train_grade_display){
+      const tw = tft.textWidth(t);
+      drawTrainGradeBadge(5 + tft.textWidth('类型: ') + tw + 2, Y_LINE_5, d.cls, d.train);
+    }
+  }
+
+  if (cfg.signal_tower_display){
+    tft.setTextColor(C.TEXT, C.BACK);
+    const numStr = r.rssi.toFixed(1);
+    const numW = tft.textWidth(numStr);
+    tft.setCursor(229 + 39 - numW/2, 153 + 21 + 2);
+    tft.print(numStr);
+    drawSignalTower(229, 153, r.rssi);
+  }
+}
+
+/* showLBJ2() —— LBJ 时间 */
+function renderLBJ2(d, r){
+  tft.fillRect(0, 25, SCREEN_W, 180, C.BACK);
+  tft.loadFont(FONT_HMOS_28);
+  tft.setCursor(5, 40);
+  tft.setTextColor(C.TITLE, C.BACK); tft.print('LBJ时间: ');
+  tft.setTextColor(C.TEXT, C.BACK);   tft.print(String(d.time) + ' ');
+
+  if (cfg.signal_tower_display){
+    tft.setTextColor(C.TEXT, C.BACK);
+    const numStr = r.rssi.toFixed(1);
+    const numW = tft.textWidth(numStr);
+    tft.setCursor(213 + 39 - numW/2, 158 + 21 + 2);
+    tft.print(numStr);
+    drawSignalTower(213, 158, r.rssi);
+  }
+}
+
+function renderMainMessage(){
+  if (!current){ renderListening(); return; }
+  if (current.type === 0)      renderLBJ0(current, rx);
+  else if (current.type === 1) renderLBJ1(current, rx);
+  else                          renderLBJ2(current, rx);
+}
+
+/* ---------- 12. 菜单页面 ---------- */
+
+/* 通用高亮：反色圆角条 */
+function highlightItem(i){
+  if (i < 0 || i >= 10) return;
+  const y = MENU_HEADER_HEIGHT + i * MENU_ITEM_HEIGHT;
+  tft.fillRect(5, y - 3, 310, 25, C.BACK);
+  tft.fillRoundRect(5, y - 3, 310, 25, 3, C.TEXT);
+  tft.setTextColor(C.BACK, C.TEXT);
+  tft.drawString(st.items[i], 15, y);
+  tft.setTextColor(C.TEXT, C.BACK);
+}
+
+function menuFooter(){
+  tft.loadFont(FONT_HMOS);
+  tft.setTextColor(C.BOTTOM, C.BACK);
+  tft.drawString('K2/K3:选择  K4:确认  K1:返回', 15, 218);
+  tft.setTextColor(C.TEXT, C.BACK);
+}
+
+function titleBar(text, right){
+  tft.fillRect(0, 0, SCREEN_W, 24, C.TITLE);
+  tft.loadFont(FONT_HMOS);
+  tft.setTextColor(C.BACK, C.TITLE);
+  tft.drawString(text, 5, 4);
+  if (right) tft.drawString(right, 270, 4);
+  tft.setTextColor(C.TEXT, C.BACK);
+}
+
+function renderSettings(){
+  const page = st.sub;                       // -1 / -2 / -3
+  tft.fillScreen(C.BACK);
+  titleBar(' 功能菜单', ' ' + Math.abs(page) + '/3 ');
+  const list = MENU_PAGE_ITEMS[Math.abs(page) - 1];
+  tft.loadFont(FONT_HMOS);
+  tft.setTextColor(C.TEXT, C.BACK);
+  for (let i = 0, y = MENU_ITEM_HEIGHT; i < 5; i++, y += MENU_ITEM_HEIGHT){
+    st.items[i] = list[i];
+    if (list[i] && list[i].length) tft.drawString(list[i], 15, y);
+  }
+  menuFooter();
+  highlightItem(st.sel);
+}
+
+function renderRxInfo(page){
+  st.rxInfoPage = page;
+  const d = current || history[0];
+  const now = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  const rxTime = d ? (d.time || '') : '20:30';
+  tft.fillScreen(C.BACK);
+  tft.loadFont(FONT_HMOS);
+  tft.setTextColor(C.TEXT, C.BACK);
+  tft.setCursor(5,5); tft.print('当前条目详细信息: ');
+  tft.setCursor(295,5); tft.print(String(page));
+  tft.drawLine(5, 27, 315, 27, C.TEXT);
+
+  if (page === 1){
+    tft.setCursor(5, 35); tft.print('当前条目:  ' + (d ? d.line : 1));
+    tft.setCursor(5, 65); tft.print('接收日期:  ' + now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate()));
+    tft.setCursor(5, 95); tft.print('接收时间:  ' + rxTime);
+    tft.setCursor(5,125); tft.print('系统时间:  ' + Math.floor(sys.uptimeMs/1000) + ' ms');
+    tft.setCursor(5,165); tft.print('       如需进入菜单请按[上]键!');
+  } else if (page === 2){
+    tft.setCursor(5, 35); tft.print('设备电压:  ' + sys.voltage.toFixed(1) + ' V 温度:  ' + sys.rtc_temp + ' C');
+    tft.setCursor(5, 65); tft.print('机车注册号:  ' + (d ? d.loco : '-----'));
+    tft.setCursor(5, 95); tft.print('机车型号:  ' + (d && d.ltype ? d.ltype : '----'));
+  } else {
+    tft.setCursor(5, 35); tft.print('测量频偏:  ' + sys.ferHz.toFixed(2) + ' Hz');
+    tft.setCursor(5, 65); tft.print('设定频偏:  ' + sys.ppm.toFixed(2) + ' ppm');
+    tft.setCursor(5, 95); tft.print('总接收条目数:  ' + history.length);
+  }
+}
+
+function renderAncMode(){
+  tft.fillScreen(C.BACK);
+  tft.loadFont(FONT_HMOS);
+  tft.setTextColor(C.TEXT, C.BACK);
+  tft.drawString('提示模式设置:', 5, 2);
+
+  st.items[0] = '<1> 静音';
+  st.items[1] = '<2> 声音';
+  st.items[2] = '<3> 震动';
+  st.items[3] = '<4> 声音+震动';
+  st.items[4] = cfg.longAnc ? '<5> 提示长短    [长]' : '<5> 提示长短    [短]';
+  st.items[5] = cfg.alert_std_mode ? '<6> 提示音      [国标]' : '<6> 提示音      [非标]';
+  st.items[6] = '<7> 音效设置 >';
+  for (let i = 0; i < 7; i++) tft.drawString(st.items[i], 10, 30 + i*30);
+
+  for (let i = 0; i < 4; i++){
+    if (i === cfg.anc_mode) tft.fillRoundRect(292, 33 + i*30, 14, 14, 3, TFT_GREEN);
+    else tft.drawRoundRect(292, 33 + i*30, 14, 14, 3, C.BOTTOM);
+  }
+  highlightItem(st.sel);
+}
+
+/* 音效设置（提示模式切换 → <7> 音效设置；无源蜂鸣器专属两级子页）：
+ * st.sub=2 → 1/2 页：按键/确认/取消/返回/错误/上行预警/下行预警 7 类提示音音调预设
+ * st.sub=3 → 2/2 页：其他提示音、开机音效开关、开机音效风格、返回上级菜单 */
+const SND_SET_NAMES = ['按键音','确认音','取消音','返回音','错误音','上行预警','下行预警'];
+function renderSoundSet(){
+  tft.fillScreen(C.BACK);
+  tft.loadFont(FONT_HMOS);
+  tft.setTextColor(C.TEXT, C.BACK);
+  if (st.sub === 2){
+    tft.drawString('音效设置 <1/2>:', 5, 2);
+    for (let i = 0; i < 7; i++){
+      st.items[i] = '<' + (i+1) + '> ' + SND_SET_NAMES[i] + '  [' +
+                    TONE_PRESET_NAMES[cfg.snd_tones[SND_TONE_KEYS[i]]] + ']';
+      tft.drawString(st.items[i], 10, 30 + i*30);
+    }
+  } else {
+    tft.drawString('音效设置 <2/2>:', 5, 2);
+    st.items[0] = '<1> 其他提示音   [' + TONE_PRESET_NAMES[cfg.snd_tones.alarmOther] + ']';
+    st.items[1] = '<2> 开机音效     [' + (cfg.boot_sound_en ? '开' : '关') + ']';
+    st.items[2] = '<3> 开机音效风格  [' + ['标准','欢快','经典'][cfg.boot_sound_type] + ']';
+    st.items[3] = '<4> 返回上级菜单';
+    for (let i = 0; i < 4; i++) tft.drawString(st.items[i], 10, 30 + i*30);
+  }
+  highlightItem(st.sel);
+}
+
+/* 音调预设试听（对应 alertPlay：系统事件，不受提示模式限制） */
+function playTonePreview(kind, tone){
+  if (!snd.on) return;
+  playMelody(MELODIES[kind] || MELODIES.key, toneFreqOf(tone));
+}
+
+function drawBriHighlight(i){
+  const yPos = [30, 110, 140, 170, 200];
+  if (i < 0 || i > 4) return;
+  tft.fillRoundRect(5, yPos[i], 310, 26, 3, C.TEXT);
+  tft.setTextColor(C.BACK, C.TEXT);
+  tft.drawString(st.items[i], 15, yPos[i] + 4);
+  tft.setTextColor(C.TEXT, C.BACK);
+}
+
+function renderBrightness(){
+  tft.fillScreen(C.BACK);
+  tft.loadFont(FONT_HMOS);
+
+  let bi = 2;
+  for (let i = 0; i < 5; i++) if (cfg.lcd_brightness === BRI_LEVELS[i]) { bi = i; break; }
+
+  st.items[0] = '<1> 屏幕亮度   [' + Math.round(BRI_LEVELS[bi]*100/255) + '%]';
+  tft.setTextColor(C.TEXT, C.BACK);
+  tft.drawString(st.items[0], 15, 34);
+
+  // 亮度条
+  const barX = 40, barY = 72, barW = 240, barH = 14;
+  tft.drawRect(barX, barY, barW, barH, C.TITLE);
+  tft.fillRect(barX+1, barY+1, Math.floor(BRI_LEVELS[bi]*(barW-2)/255), barH-2, C.TITLE);
+  tft.setTextColor(C.BOTTOM, C.BACK);
+  for (let i = 1; i <= 5; i++){
+    const tx = barX + barW*i/5;
+    tft.drawFastVLine(tx, barY + barH + 2, 5, C.BOTTOM);
+    const lbl = String(i*20);
+    tft.drawString(lbl, tx - tft.textWidth(lbl)/2, barY + barH + 9);
+  }
+
+  st.items[1] = '<2> 屏幕背光时间   [' + LCD_LIGHTTIME_ARRY[cfg.lcd_lighttime] + '] 秒';
+  tft.setTextColor(C.TEXT, C.BACK); tft.drawString(st.items[1], 15, 114);
+
+  st.items[2] = '<3> 菜单自动退出   [' + MENU_TIMEOUT_ARRY[cfg.menu_timeout_idx] + '] 秒';
+  tft.drawString(st.items[2], 15, 144);
+
+  st.items[3] = '<4> 电池栏信息   [' + BATINFO_NAMES[cfg.BATINFO_level] + ']';
+  tft.drawString(st.items[3], 15, 174);
+
+  st.items[4] = '<5> 开启屏幕反显   ' + (cfg.invert_display ? '[已禁用]' : '[已启用]') + ' ';
+  tft.drawString(st.items[4], 15, 204);
+
+  drawBriHighlight(st.sel);
+}
+
+function renderTheme(){
+  tft.fillScreen(C.BACK);
+  titleBar(st.sub === 1 ? '  主题选择 <1/2>' : '  显示元素 <2/2>', null);
+
+  if (st.sub === 1){
+    const sw = [0xFDA0,0xF800,0x07E0,0x07FF,0x8410,0x7C3F,0xFD20,0xD81B];
+    for (let i = 0; i < 8; i++){
+      const y = 30 + i*23;
+      const sel = (i === st.sel);
+      if (sel){ tft.fillRoundRect(6, y-2, 308, 21, 3, C.TEXT); tft.setTextColor(C.BACK, C.TEXT); }
+      else tft.setTextColor(C.TEXT, C.BACK);
+      tft.drawString('<' + (i+1) + '> ' + THEMES[i].name, 16, y+2);
+      tft.fillRoundRect(280, y, 24, 16, 2, sw[i]);
+      tft.drawRoundRect(280, y, 24, 16, 2, sel ? C.BACK : C.TEXT);
+      st.items[i] = '<' + (i+1) + '> ' + THEMES[i].name;
+    }
+  } else {
+    const typeMode = ['已关闭', '旧版', '新版'];
+    const names = [
+      '<1> 列车类型显示  [' + typeMode[cfg.train_type_display] + ']',
+      '<2> 车次等级标识  [' + (cfg.train_grade_display ? '已启用' : '已禁用') + ']',
+      '<3> 信号塔显示    [' + (cfg.signal_tower_display ? '已启用' : '已禁用') + ']',
+      '<4> 返回上级菜单'
+    ];
+    for (let i = 0; i < 4; i++){
+      const y = 40 + i*40;
+      const sel = (i === st.sel);
+      if (sel){ tft.fillRoundRect(6, y-2, 308, 30, 4, C.TEXT); tft.setTextColor(C.BACK, C.TEXT); }
+      else tft.setTextColor(C.TEXT, C.BACK);
+      tft.drawString(names[i], 20, y+7);
+      st.items[i] = names[i];
+    }
+  }
+  tft.loadFont(FONT_HMOS);
+  tft.setTextColor(C.BOTTOM, C.BACK);
+  tft.drawString('K2/K3:选择  K4:确认  K1:返回', 45, 222);
+  tft.setTextColor(C.TEXT, C.BACK);
+}
+
+function renderTimeSet(){
+  tft.fillScreen(C.BACK);
+  titleBar('  手动设置时间', null);
+
+  const labels = ['年','月','日','时','分','秒'];
+  const BOX_W = 36, BOX_H = 32, X0 = 78, GAP = 28;
+  const DATE_LABEL_Y = 44, DATE_BOX_Y = 62, TIME_LABEL_Y = 118, TIME_BOX_Y = 136;
+  const boxY = [DATE_BOX_Y, DATE_BOX_Y, DATE_BOX_Y, TIME_BOX_Y, TIME_BOX_Y, TIME_BOX_Y];
+  const labelY = [DATE_LABEL_Y, DATE_LABEL_Y, DATE_LABEL_Y, TIME_LABEL_Y, TIME_LABEL_Y, TIME_LABEL_Y];
+
+  tft.loadFont(FONT_HMOS);
+  for (let i = 0; i < 6; i++){
+    const col = i % 3;
+    const bx = X0 + col*(BOX_W + GAP);
+    const txt = String(st.timeDigits[i]).padStart(2,'0');
+    st.items[i] = txt;
+    const sel = (st.sel === i);
+
+    tft.fillRect(bx, boxY[i], BOX_W, BOX_H, sel ? C.TEXT : C.BACK);
+    tft.drawRect(bx, boxY[i], BOX_W, BOX_H, C.TITLE);
+    if (sel) tft.setTextColor(C.BACK, C.TEXT); else tft.setTextColor(C.TEXT, C.BACK);
+    tft.drawString(txt, bx + (BOX_W - tft.textWidth(txt))/2, boxY[i] + (BOX_H - 20)/2);
+
+    tft.setTextColor(C.BOTTOM, C.BACK);
+    tft.drawString(labels[i], bx + (BOX_W - tft.textWidth(labels[i]))/2, labelY[i]);
+  }
+
+  // 分隔符
+  tft.setTextColor(C.TEXT, C.BACK);
+  tft.drawString('-', X0 + BOX_W + (GAP - 6)/2, DATE_BOX_Y + 8);
+  tft.drawString('-', X0 + 2*(BOX_W + GAP) - GAP + (GAP - 6)/2, DATE_BOX_Y + 8);
+  tft.drawString(':', X0 + BOX_W + (GAP - 6)/2, TIME_BOX_Y + 8);
+  tft.drawString(':', X0 + 2*(BOX_W + GAP) - GAP + (GAP - 6)/2, TIME_BOX_Y + 8);
+
+  // 确定按钮
+  const selOk = (st.sel === 6);
+  if (selOk){ tft.fillRoundRect(132, 200, 56, 24, 4, C.TEXT); tft.setTextColor(C.BACK, C.TEXT); }
+  else tft.setTextColor(C.TEXT, C.BACK);
+  tft.drawString('确 定', 142, 205);
+  tft.setTextColor(C.TEXT, C.BACK);
+
+  // 数字位红框
+  if (st.sel >= 0 && st.sel <= 5){
+    const col = st.sel % 3;
+    const bx = X0 + col*(BOX_W + GAP);
+    tft.drawRect(bx - 2, boxY[st.sel] - 2, BOX_W + 4, BOX_H + 4, TFT_RED);
+  }
+}
+
+function renderFreq(){
+  tft.fillScreen(C.BACK);
+  tft.loadFont(FONT_HMOS);
+  tft.setTextColor(C.TEXT, C.BACK);
+  tft.drawString('自动频率校正:', 5, 5);
+
+  st.items[0] = '自动校正: ' + (cfg.freq_correction ? '[开启]' : '[关闭]');
+  st.items[1] = '当前偏移: ' + sys.ppm.toFixed(2) + ' ppm';
+  tft.drawString(st.items[0], 10, 30);
+  tft.drawString(st.items[1], 10, 60);
+
+  const cur = sys.ppm, a = Math.abs(cur);
+  tft.drawRect(60, 110, 200, 14, C.TITLE);
+  tft.drawFastVLine(160, 105, 24, C.BOTTOM);
+  const mx = 160 + Math.round(Math.max(-20, Math.min(20, cur)) * 4.9);
+  tft.fillRect(mx - 2, 112, 4, 10, (a <= 5) ? TFT_GREEN : (a <= 10) ? TFT_YELLOW : TFT_RED);
+
+  tft.setTextColor(C.BOTTOM, C.BACK);
+  tft.drawString('-20', 44, 130);
+  tft.drawString('0', 157, 130);
+  tft.drawString('+20', 248, 130);
+  tft.setTextColor(C.TEXT, C.BACK);
+
+  highlightItem(st.sel);
+}
+
+function boolMark(v){ return v ? '[已启用]' : '[已禁用]'; }
+
+function renderCond(){
+  tft.fillScreen(C.BACK);
+  tft.loadFont(FONT_HMOS);
+  tft.setTextColor(C.TEXT, C.BACK);
+  tft.drawString('条件过滤 & 通用设置:', 5, 2);
+
+  const flags = [cfg.filt_none_msg, cfg.filt_usignTrain_msg, cfg.filt_old_msg,
+                 cfg.filt_LBJtime_msg, cfg.filt_weakSig_msg, cfg.enable_powerSave, cfg.flit_lowpowerOFF];
+  const items = [
+    '<1> 过滤-机辆机待消息 %s',
+    '<2> 过滤-未注册机消息 %s',
+    '<3> 过滤-旧版预警消息 %s',
+    '<4> 过滤-机辆时间消息 %s',
+    '<5> 过滤-较弱信号消息 %s',
+    '<6> 设备-低功耗模式 %s',
+    '<7> 设备-低电关机保护 %s'
+  ];
+  for (let i = 0; i < 7; i++){
+    st.items[i] = items[i].replace('%s', boolMark(flags[i]));
+    tft.drawString(st.items[i], 10, 30 + i*30);
+  }
+  highlightItem(st.sel);
+}
+
+function renderKiloCond(){
+  tft.fillScreen(C.BACK);
+  tft.loadFont(FONT_HMOS);
+  tft.setTextColor(C.TEXT, C.BACK);
+  tft.drawString('公里标 & 告警条件设置:', 5, 2);
+
+  const flags = [cfg.enable_kilo_flit, cfg.enable_UP_flit, cfg.enable_DOWN_flit,
+                 cfg.enable_departure_flit, cfg.enable_arrivaltime_disp];
+  const items = [
+    '1> 启用公里标过滤功能 %s',
+    '2> [上行] 列车报警 %s',
+    '3> [下行] 列车报警 %s',
+    '4> 屏蔽离去列车报警 %s',
+    '5> 显示列车到达时间 %s'
+  ];
+  for (let i = 0; i < 5; i++){
+    st.items[i] = items[i].replace('%s', boolMark(flags[i]));
+    tft.drawString(st.items[i], 10, 30 + i*30);
+  }
+  st.items[5] = '6> 设置当前公里标 ' + (cfg.m_kmTenths/10).toFixed(1) + ' Km';
+  st.items[6] = '7> 设置告警距离限制 ' + KILO_LIMIT_ARRY[cfg.Kilo_limit_level].toFixed(1) + ' Km';
+  tft.drawString(st.items[5], 10, 180);
+  tft.drawString(st.items[6], 10, 210);
+  highlightItem(st.sel);
+}
+
+/* 数字输入窗口：历史条目索引（4位） */
+function renderIndex(){
+  const winW = 213, winH = 160, winX = 53, winY = 40;
+  tft.fillRect(0, 0, SCREEN_W, SCREEN_H, C.BACK);
+  tft.fillRect(winX, winY, winW, winH, C.BACK);
+  tft.drawRect(winX, winY, winW, winH, C.TITLE);
+
+  tft.setTextColor(C.TEXT, C.BACK);
+  tft.drawString('历史条目索引:', winX + 5, winY + 5);
+  tft.drawFastHLine(winX + 14, winY + 30, winW - 28, C.TEXT);
+
+  const numStartX = winX + 60, numY = winY + 70;
+  const s = String(st.lines).padStart(4,'0');
+  for (let i = 0; i < 4; i++){
+    st.items[i] = s[i];
+    tft.drawString(s[i], numStartX + i*32, numY);
+  }
+
+  const btnY = winY + winH - 30;
+  tft.drawFastHLine(winX + 14, btnY - 10, winW - 28, C.TITLE);
+  tft.drawFastVLine(winX + winW/2, btnY - 8, 16, C.TITLE);
+  tft.drawString('确定', winX + 50, btnY);
+  tft.drawString('取消', winX + winW/2 + 20, btnY);
+  highlightIndex(st.sel);
+}
+
+function highlightIndex(item){
+  const winX = 53, winW = 213;
+  const btnY = 170;
+  if (item === 4){
+    tft.fillRect(winX + 50, btnY, 40, 20, C.TEXT);
+    tft.setTextColor(C.BACK, C.TEXT);
+    tft.drawString('确定', winX + 50, btnY);
+  } else if (item === 5){
+    tft.fillRect(winX + winW/2 + 20, btnY, 40, 20, C.TEXT);
+    tft.setTextColor(C.BACK, C.TEXT);
+    tft.drawString('取消', winX + winW/2 + 20, btnY);
+  } else if (item >= 0 && item <= 3){
+    tft.drawRect(108 + item*32 - 2, 105, 28, 28, TFT_RED);
+  }
+  tft.setTextColor(C.TITLE, C.BACK);
+}
+
+/* 数字输入窗口：公里标（5位，含小数点） */
+function renderKiloIndex(){
+  const winW = 213, winH = 160, winX = 53, winY = 40;
+  tft.fillRect(0, 0, SCREEN_W, SCREEN_H, C.BACK);
+  tft.fillRect(winX, winY, winW, winH, C.BACK);
+  tft.drawRect(winX, winY, winW, winH, C.TITLE);
+
+  tft.setTextColor(C.TEXT, C.BACK);
+  tft.drawString('设置本地公里标:', winX + 5, winY + 5);
+  tft.drawFastHLine(winX + 14, winY + 30, winW - 28, C.TEXT);
+
+  const s = String(cfg.m_kmTenths).padStart(5,'0');
+  const numStartX = winX + 20, numY = winY + 70, EXTRA = 12;
+  for (let i = 0; i < 5; i++){
+    st.items[i] = s[i];
+    const bx = (i < 4) ? (numStartX + i*28) : (numStartX + 4*28 + EXTRA);
+    tft.drawRect(bx, numY, 28, 28, C.TITLE);
+    tft.fillRect(bx+1, numY+1, 26, 26, C.BACK);
+    tft.setTextColor(C.TEXT, C.BACK);
+    tft.drawString(s[i], bx + 10, numY + 6);
+  }
+  const dotX = numStartX + 112 + EXTRA/2 - 1;
+  const dotY = numY + 12;
+  tft.fillRect(dotX, dotY, 3, 3, C.TEXT);
+
+  const btnY = winY + winH - 30;
+  tft.drawFastHLine(winX + 14, btnY - 10, winW - 28, C.TITLE);
+  tft.drawFastVLine(winX + winW/2, btnY - 8, 16, C.TITLE);
+  tft.drawString('确定', winX + 50, btnY);
+  tft.drawString('取消', winX + winW/2 + 20, btnY);
+  highlightKiloIndex(st.sel);
+}
+
+function highlightKiloIndex(item){
+  const winX = 53, winY = 40, winW = 213;
+  const btnY = winY + 160 - 30;
+  const numStartX = winX + 20, numY = winY + 70, EXTRA = 12;
+  const getBoxX = idx => (idx < 4) ? (numStartX + idx*28) : (numStartX + 4*28 + EXTRA);
+
+  if (item === 5){
+    tft.fillRect(winX + 50, btnY, 40, 20, C.TEXT);
+    tft.setTextColor(C.BACK, C.TEXT);
+    tft.drawString('确定', winX + 50, btnY);
+  } else if (item === 6){
+    tft.fillRect(winX + winW/2 + 20, btnY, 40, 20, C.TEXT);
+    tft.setTextColor(C.BACK, C.TEXT);
+    tft.drawString('取消', winX + winW/2 + 20, btnY);
+  } else if (item >= 0 && item <= 4){
+    tft.drawRect(getBoxX(item) - 2, numY - 2, 32, 32, TFT_RED);
+  }
+  tft.setTextColor(C.TITLE, C.BACK);
+}
+
+/* 快捷查看显示模式选择 */
+function renderQVMode(){
+  tft.fillScreen(C.BACK);
+  titleBar('快捷查看-显示模式', null);
+  const modes = [
+    '1>序号 车次 方向 线路 里程',
+    '2>序号 车次 方向 机车',
+    '3>车次 方向 线路 里程',
+    '4>车次 方向 线路 机车',
+    '5>车次 方向 速度 里程'
+  ];
+  tft.loadFont(FONT_HMOS);
+  for (let i = 0; i < 5; i++){
+    st.items[i] = modes[i] + (i === cfg.quick_view_mode ? '  [+]' : '');
+    tft.drawString(st.items[i], 15, MENU_HEADER_HEIGHT + i*MENU_ITEM_HEIGHT);
+  }
+  menuFooter();
+  highlightItem(st.sel);
+}
+
+/* 历史消息快捷查看 */
+function renderQuickView(){
+  tft.fillScreen(C.BACK);
+  titleBar('历史消息快捷查看', null);
+
+  const m = cfg.quick_view_mode;
+  const colCnt = (m === 0) ? 5 : 4;
+  const headerSets = [
+    ['序号','车次','方向','线路','里程'],
+    ['序号','车次','方向','车号',''],
+    ['车次','方向','线路','里程',''],
+    ['车次','方向','线路','车号',''],
+    ['车次','方向','速度','里程','']
+  ];
+  // 列起始 X 坐标：按内容宽度分配，表头与数据共用
+  const COLS = [
+    [8, 46, 132, 166, 258],     // M1 序号/车次/方向/线路/里程
+    [8, 46, 132, 166],           // M2 序号/车次/方向/车号
+    [8, 92, 126, 232],           // M3 车次/方向/线路/里程
+    [8, 92, 126, 222],           // M4 车次/方向/线路/车号
+    [8, 92, 126, 200]            // M5 车次/方向/速度/里程
+  ][m];
+
+  tft.loadFont(FONT_HMOS);
+  tft.setTextColor(C.BOTTOM, C.BACK);
+  for (let i = 0; i < colCnt; i++) tft.drawString(headerSets[m][i], COLS[i], 30);
+  tft.drawFastHLine(5, 51, 310, C.BOTTOM);
+  tft.setTextColor(C.TEXT, C.BACK);
+
+  const yStart = 58, yStep = 32;
+  const total = history.length;
+  let startIdx = Math.max(0, total - 5 - st.qvOffset);
+  const rows = [];
+  for (let i = 0; i < 5; i++){
+    const idx = startIdx + i;
+    if (idx >= 0 && idx < total) rows.push(history[idx]);
+  }
+
+  rows.forEach((d, i) => {
+    const y = yStart + i*yStep;
+    const trainTxt = (d.cls && d.cls !== '--' ? d.cls : '') + d.train;
+    const loco5 = String(d.loco).slice(-5);
+    const locoDisp = (d.ltype && d.ltype.length) ? (d.ltype + '-' + loco5) : (String(d.loco) || '--');
+
+    // 序号（模式 0/1）
+    if (m === 0 || m === 1){
+      tft.setTextColor(C.BOTTOM, C.BACK);
+      tft.drawString(String(d.line) + ' ', COLS[0], y);
+    }
+    // 车次
+    tft.setTextColor(C.TEXT, C.BACK);
+    tft.drawString(m === 0 || m === 1 ? trainTxt : trainTxt, COLS[m === 0 || m === 1 ? 1 : 0], y);
+
+    // 方向
+    const dirCol = (m === 0 || m === 1) ? 2 : 1;
+    if (d.dir === 3){ tft.setTextColor(C.UP, C.BACK); tft.drawString('上', COLS[dirCol], y); }
+    else if (d.dir === 1){ tft.setTextColor(C.DOWN, C.BACK); tft.drawString('下', COLS[dirCol], y); }
+    else { tft.setTextColor(C.BOTTOM, C.BACK); tft.drawString('--', COLS[dirCol], y); }
+
+    // 第 3 列
+    const c3 = (m === 0 || m === 1) ? 3 : 2;
+    tft.setTextColor(C.TEXT, C.BACK);
+    if (m === 1)      tft.drawString(locoDisp, COLS[c3], y);
+    else if (m === 4) tft.drawString(String(d.speed), COLS[c3], y);
+    else              tft.drawString(String(d.route), COLS[c3], y);
+
+    // 第 4 列（模式 1 无）
+    if (m !== 1){
+      tft.setTextColor(C.TOP, C.BACK);
+      tft.drawString(m === 3 ? locoDisp : String(d.pos), COLS[c3+1], y);
+    }
+  });
+
+  if (rows.length === 0){
+    tft.setTextColor(C.TITLE, C.BACK);
+    tft.drawString('暂无历史消息', 100, 120);
+  }
+
+  // 底部
+  tft.setTextColor(C.BOTTOM, C.BACK);
+  const totalPages = Math.max(1, Math.ceil(total/5));
+  const curPage = st.qvOffset/5 + 1;
+  const segs = ['[' + curPage + '/' + totalPages + ']页', 'K4:模式', 'K1:返回'];
+  for (let i = 0; i < 3; i++){
+    const cx = (i+1) * SCREEN_W / 4;
+    tft.drawString(segs[i], cx - tft.textWidth(segs[i])/2, 222);
+  }
+  tft.setTextColor(C.TEXT, C.BACK);
+}
+
+/* 关于本机 */
+function renderAbout(page){
+  tft.fillScreen(C.BACK);
+  tft.loadFont(FONT_HMOS);
+  tft.setTextColor(C.TEXT, C.BACK);
+  tft.drawString('关于设备:', 10, 5);
+
+  if (page === 1){
+    tft.drawString('便携防护预警终端', 10, 35);
+    tft.drawString('MCU Build: ' + 3, 10, 65);
+    tft.drawString('序列号: ' + 1234567, 10, 95);
+    tft.drawString('内存堆: ' + sys.freeHeapKB + ' / 512 KB', 10, 125);
+    tft.drawString('消息空间: ' + history.length + ' / 2000 条', 10, 155);
+    tft.drawString('<1/2>', 132, 200);
+  } else {
+    tft.drawString('便携防护预警终端', 10, 35);
+    tft.drawString('型号: DX-20S', 10, 65);
+    tft.drawString('固件: 20S_V2.1.0_260908C', 10, 95);
+    tft.drawString('日期: 26Q3', 10, 125);
+    tft.drawString('2026 EagleOwl Tec.', 10, 155);
+    tft.drawString('<2/2>', 132, 200);
+  }
+}
+
+/* 确认对话框（重置/删除） */
+function renderConfirm(){
+  tft.fillScreen(C.BACK);
+  tft.fillRoundRect(30, 50, 260, 140, 10, C.BACK);
+  tft.drawRoundRect(30, 50, 260, 140, 10, C.TEXT);
+
+  tft.loadFont(FONT_HMOS);
+  tft.setTextColor(C.TITLE, C.BACK);
+  ctx.font = 'bold ' + (FONT_HMOS + 4) + 'px ' + FONT_FAMILY;   // 标题 size 2 效果
+  const tw = ctx.measureText(st.confirmTitle).width;
+  ctx.fillStyle = rgb565(C.TITLE);
+  ctx.textBaseline = 'top';
+  ctx.fillText(st.confirmTitle, SCREEN_W/2 - tw/2, 70);
+
+  tft.setTextColor(C.TEXT, C.BACK);
+  const mw = tft.textWidth(st.confirmBody);
+  tft.drawString(st.confirmBody, SCREEN_W/2 - mw/2, 110);
+
+  if (st.sel === 0){
+    tft.setTextColor(TFT_GREEN, C.BACK); tft.drawString('[确认]', 104, 155);
+    tft.setTextColor(TFT_RED, C.BACK);   tft.drawString('取消', 184, 155);
+  } else {
+    tft.setTextColor(TFT_RED, C.BACK);    tft.drawString('确认', 104, 155);
+    tft.setTextColor(TFT_GREEN, C.BACK); tft.drawString('[取消]', 184, 155);
+  }
+  tft.setTextColor(C.TEXT, C.BACK);
+}
+
+/* showMessage 对话框 */
+function renderMsgBox(){
+  tft.fillRoundRect(DIALOG_X, DIALOG_Y, DIALOG_W, DIALOG_H, 10, C.BACK);
+  tft.drawRoundRect(DIALOG_X, DIALOG_Y, DIALOG_W, DIALOG_H, 10, C.TITLE);
+
+  tft.loadFont(FONT_HMOS);
+  tft.setTextColor(C.TITLE, C.BACK);
+  tft.drawString(st.msgTitle, DIALOG_X + 15, DIALOG_Y + 10);
+  tft.drawFastHLine(DIALOG_X + 10, DIALOG_Y + 30, DIALOG_W - 20, C.TITLE);
+
+  tft.setTextColor(C.TEXT, C.BACK);
+  let tx = DIALOG_X + (DIALOG_W - tft.textWidth(st.msgBody)) / 2;
+  tx = Math.max(tx, DIALOG_X + 15);
+  tft.drawString(st.msgBody, tx, DIALOG_Y + DIALOG_H/2 - 8);
+
+  tft.setTextColor(C.BOTTOM, C.BACK);
+  const hint = 'K4:确定';
+  tft.drawString(hint, DIALOG_X + (DIALOG_W - tft.textWidth(hint))/2, DIALOG_Y + DIALOG_H - 24);
+  tft.setTextColor(C.TEXT, C.BACK);
+}
+
+function renderSystemStatus(){
+  tft.fillScreen(C.BACK);
+  titleBar('系统状态监控', null);
+  tft.loadFont(FONT_HMOS);
+  let y = 32;
+  const put = s => { tft.setTextColor(C.TEXT, C.BACK); tft.drawString(s, 10, y); y += 26; };
+
+  put('可用堆内存: ' + sys.freeHeapKB + ' KB');
+  put('最低堆内存: ' + sys.minHeapKB + ' KB');
+  put('CPU 频率: ' + sys.cpuMhz + ' MHz');
+  const up = Math.floor(sys.uptimeMs/1000);
+  put('运行时间: ' + Math.floor(up/86400) + '天' +
+      String(Math.floor((up%86400)/3600)).padStart(2,'0') + '时' +
+      String(Math.floor((up%3600)/60)).padStart(2,'0') + '分');
+  put('电池电压: ' + sys.voltage.toFixed(2) + ' V');
+  put('历史消息: ' + history.length + ' / 2000 条');
+  put('当前频偏: ' + sys.ppm.toFixed(2) + ' ppm');
+
+  tft.setTextColor(C.BOTTOM, C.BACK);
+  tft.drawString('K4:返回菜单', 120, 218);
+  tft.setTextColor(C.TEXT, C.BACK);
+}
+
+/* ---------- 13. 统一渲染入口 ---------- */
+const MODE_LABEL = {
+  [S.CLOSED]:'待机监听', [S.RX_INFO]:'条目详细信息', [S.SETTINGS]:'功能菜单',
+  [S.ABOUT]:'关于本机', [S.FREQ]:'自动频率校正', [S.ALARM_M]:'提示模式设置', [S.SOUND_SET]:'音效设置',
+  [S.INDEX]:'历史条目索引', [S.KILO_INDEX]:'设置本地公里标', [S.INDEX_INPUT]:'索引输入',
+  [S.KILO_INDEX_INPUT]:'公里标输入', [S.BRIGHTNESS]:'屏幕 & 息屏',
+  [S.ALAR_CONDT]:'条件过滤 & 通用', [S.ALAR_KILO_CONDT]:'公里标 & 告警',
+  [S.THEME]:'主题 & 显示元素', [S.REBOOT]:'重启设备', [S.FORMAT_FS]:'删除历史消息',
+  [S.FORMAT_SETTINGS]:'清除个性化设置', [S.QUICK_VIEW]:'历史消息快捷查看',
+  [S.QV_MODE]:'显示模式选择', [S.TIME_SET]:'手动设置时间', [S.TIME_SET_INPUT]:'时间设置输入',
+  [S.SYSTEM_STATUS]:'系统状态监控',
+};
+
+function render(){
+  applyTheme(cfg.display_style);
+  switch (st.page){
+    case S.CLOSED:
+      tft.fillScreen(C.BACK);
+      if (current){
+        if (reviewMode){
+          drawTopBarReview(current);
+          renderMainMessage();
+          drawBottomBarReview(current);
+        } else {
+          drawTopBar();
+          renderMainMessage();
+          drawBottomBar();
+        }
+      } else {
+        drawTopBar(); drawBottomBar();
+        renderListening();
+      }
+      break;
+    case S.RX_INFO:
+      renderRxInfo(st.rxInfoPage);
+      break;
+    case S.SETTINGS:
+      renderSettings();
+      break;
+    case S.ABOUT:
+      renderAbout(st.sub);
+      break;
+    case S.FREQ:
+      renderFreq();
+      break;
+    case S.ALARM_M:
+      renderAncMode();
+      break;
+    case S.SOUND_SET:
+      renderSoundSet();
+      break;
+    case S.INDEX:
+      renderIndex();
+      break;
+    case S.INDEX_INPUT:
+      renderIndex(); drawDigitIndex(st.sel, true);
+      break;
+    case S.KILO_INDEX:
+      renderKiloIndex();
+      break;
+    case S.KILO_INDEX_INPUT:
+      renderKiloIndex(); drawKiloDigitIndex(st.sel, true);
+      break;
+    case S.BRIGHTNESS:
+      renderBrightness();
+      break;
+    case S.ALAR_CONDT:
+      renderCond();
+      break;
+    case S.ALAR_KILO_CONDT:
+      renderKiloCond();
+      break;
+    case S.THEME:
+      renderTheme();
+      break;
+    case S.FORMAT_FS:
+      renderConfirm();
+      break;
+    case S.FORMAT_SETTINGS:
+      renderFormatSettings();
+      break;
+    case S.QUICK_VIEW:
+      renderQuickView();
+      break;
+    case S.QV_MODE:
+      renderQVMode();
+      break;
+    case S.TIME_SET:
+      renderTimeSet();
+      break;
+    case S.TIME_SET_INPUT:
+      renderTimeSet(); drawTimeDigit(st.sel, true);
+      break;
+    case S.SYSTEM_STATUS:
+      renderSystemStatus();
+      break;
+  }
+  const mm = document.getElementById('meta-mode');
+  if (mm) mm.textContent = MODE_LABEL[st.page] || '';
+}
+
+/* 清除数字区并反色重绘（索引 4 位） */
+function drawDigitIndex(item, inv){
+  const winX = (SCREEN_W - 213)/2, winY = (SCREEN_H - 160)/2;
+  const numY = winY + 70;
+  const bx = winX + 60 + item*32;
+  tft.fillRect(bx, numY, 24, 24, inv ? C.TEXT : C.BACK);
+  tft.setTextColor(inv ? C.BACK : C.TEXT, inv ? C.TEXT : C.BACK);
+  tft.drawString(st.items[item], bx + 4, numY + 4);
+  tft.setTextColor(C.TEXT, C.BACK);
+}
+
+function drawKiloDigitIndex(item, inv){
+  const winX = 53, winY = 40;
+  const numY = winY + 70, EXTRA = 12;
+  const bx = (item < 4) ? (winX + 20 + item*28) : (winX + 20 + 4*28 + EXTRA);
+  tft.fillRect(bx+1, numY+1, 26, 26, inv ? C.TEXT : C.BACK);
+  tft.setTextColor(inv ? C.BACK : C.TEXT, inv ? C.TEXT : C.BACK);
+  tft.drawString(st.items[item], bx + 10, numY + 6);
+  tft.setTextColor(C.TEXT, C.BACK);
+}
+
+function drawTimeDigit(item, inv){
+  const BOX_W = 36, BOX_H = 32, X0 = 78, GAP = 28;
+  const boxY = [62,62,62,136,136,136];
+  const bx = X0 + (item % 3)*(BOX_W + GAP);
+  tft.fillRect(bx+1, boxY[item]+1, BOX_W-2, BOX_H-2, inv ? C.TEXT : C.BACK);
+  tft.setTextColor(inv ? C.BACK : C.TEXT, inv ? C.TEXT : C.BACK);
+  tft.drawString(st.items[item], bx + (BOX_W - tft.textWidth(st.items[item]))/2, boxY[item] + (BOX_H - 20)/2);
+  tft.setTextColor(C.TEXT, C.BACK);
+}
+
+/* 重置设置页 */
+function renderFormatSettings(){
+  tft.fillScreen(C.BACK);
+  tft.loadFont(FONT_HMOS);
+  tft.setTextColor(C.TEXT, C.BACK);
+  tft.drawString('清除个性化设置:', 5, 2);
+  st.items[0] = '<1> 返回菜单';
+  st.items[1] = '<2> 清除所有个性化设置!';
+  tft.drawString(st.items[0], 10, 30);
+  tft.drawString(st.items[1], 10, 60);
+  tft.drawString('-该操作将清除所有个性化设置', 10, 120);
+  tft.drawString('-并恢复默认模式', 10, 150);
+  highlightItem(st.sel);
+}
+
+/* ---------- 14. 交互逻辑 ---------- */
+function setItems(list){ for (let i = 0; i < list.length; i++) st.items[i] = list[i]; }
+
+function openMenu(){
+  st.isMenu = true;
+  if (st.alwaysNew){
+    st.page = S.SETTINGS; st.sub = -1; st.sel = 0;
+  } else {
+    st.page = S.RX_INFO; st.sub = 1;
+  }
+  render();
+}
+
+function closeMenu(){
+  if (st.page !== S.SETTINGS && st.page !== S.RX_INFO){ showLast(); return; }
+  exitMenuUI();
+}
+
+function exitMenuUI(){
+  st.page = S.CLOSED; st.sub = 0; st.isMenu = false; reviewMode = false;
+  render();
+}
+
+function showLast(){
+  st.isMsg = false;
+  const back = {
+    [S.ABOUT]:      [S.SETTINGS, -3, 0],
+    [S.FREQ]:       [S.SETTINGS, -2, 0],
+    [S.ALARM_M]:    [S.SETTINGS, -1, 1],
+    [S.SOUND_SET]:  [S.ALARM_M, 1, 6],
+    [S.BRIGHTNESS]: [S.SETTINGS, -1, 2],
+    [S.INDEX]:      [S.SETTINGS, -2, 3],
+    [S.INDEX_INPUT]:[S.INDEX,     0, st.sel],
+    [S.KILO_INDEX]: [S.SETTINGS, -2, 2],
+    [S.KILO_INDEX_INPUT]:[S.KILO_INDEX, 0, st.sel],
+    [S.THEME]:      [S.SETTINGS, -1, 3],
+    [S.ALAR_CONDT]: [S.SETTINGS, -2, 1],
+    [S.ALAR_KILO_CONDT]:[S.SETTINGS, -2, 2],
+    [S.FORMAT_FS]:  [S.SETTINGS, -3, 1],
+    [S.FORMAT_SETTINGS]:[S.SETTINGS, -3, 2],
+    [S.QUICK_VIEW]: [S.SETTINGS, -1, 0],
+    [S.QV_MODE]:    [S.QUICK_VIEW, 0, 0],
+    [S.TIME_SET]:   [S.SETTINGS, -1, 4],
+    [S.TIME_SET_INPUT]:[S.SETTINGS, -1, 4],
+    [S.SYSTEM_STATUS]:[S.SETTINGS, -2, 4],
+  }[st.page];
+  if (back){ st.page = back[0]; st.sub = back[1]; st.sel = back[2]; }
+  render();
+}
+
+function showMessage(title, body){
+  st.isMsg = true;
+  st.msgTitle = title; st.msgBody = body;
+  render();
+  // 在底层页面之上绘制对话框
+  renderMsgBox();
+}
+
+function handleKey(up){
+  if (!st.isMenu) {
+    // 主界面下 K2/K3 为回看
+    if (!history.length) return;
+    reviewMode = true;
+    const idx = current ? history.findIndex(h => h.line === current.line) : history.length - 1;
+    let ni = up ? idx - 1 : idx + 1;
+    if (ni < 0) ni = history.length - 1;
+    if (ni >= history.length) ni = 0;
+    current = history[ni];
+    render();
+    return;
+  }
+
+  if (st.isMsg) showLast();
+
+  const wrap = (v, lo, hi) => (v < lo ? hi : (v > hi ? lo : v));
+
+  switch (st.page){
+    case S.RX_INFO:
+      st.sub = up ? st.sub - 1 : st.sub + 1;
+      if (st.sub < 1){ st.page = S.SETTINGS; st.sub = -1; st.sel = 4; }
+      else { if (st.sub > 3) st.sub = 1; }
+      break;
+
+    case S.SETTINGS: {
+      const cnt = (st.sub === -3) ? 3 : 5;
+      st.sel = up ? st.sel - 1 : st.sel + 1;
+      if (st.sel < 0){
+        if (st.sub === -1){ st.sub = -3; st.sel = 2; }
+        else { st.sub++; st.sel = 4; }
+      } else if (st.sel >= cnt){
+        if (st.sub === -3){ st.sub = -1; st.sel = 0; }
+        else if (st.sub === -1 && !st.alwaysNew){
+          st.page = S.RX_INFO; st.sub = 1; break;
+        } else { st.sub--; st.sel = 0; }
+      }
+      break;
+    }
+
+    case S.ABOUT:
+      st.sub = Math.min(2, Math.max(1, up ? st.sub - 1 : st.sub + 1));
+      break;
+
+    case S.FREQ:
+      st.sel = Math.min(1, Math.max(0, st.sel + (up ? -1 : 1)));
+      break;
+
+    case S.ALARM_M:
+      st.sel = wrap(st.sel + (up ? -1 : 1), 0, 6);
+      break;
+
+    case S.SOUND_SET: {
+      const cnt = (st.sub === 2) ? 7 : 4;
+      st.sel = wrap(st.sel + (up ? -1 : 1), 0, cnt - 1);
+      break;
+    }
+
+    case S.INDEX:
+      st.sel = wrap(st.sel + (up ? -1 : 1), 0, 5);
+      break;
+
+    case S.INDEX_INPUT: {
+      const d = st.items[st.sel];
+      st.items[st.sel] = String((parseInt(d,10) + (up ? 1 : -1) + 10) % 10);
+      break;
+    }
+
+    case S.KILO_INDEX:
+      st.sel = wrap(st.sel + (up ? -1 : 1), 0, 6);
+      break;
+
+    case S.KILO_INDEX_INPUT: {
+      const d = st.items[st.sel];
+      st.items[st.sel] = String((parseInt(d,10) + (up ? 1 : -1) + 10) % 10);
+      break;
+    }
+
+    case S.ALAR_CONDT:
+      st.sel = Math.min(6, Math.max(0, st.sel + (up ? -1 : 1)));
+      break;
+
+    case S.ALAR_KILO_CONDT:
+      st.sel = Math.min(6, Math.max(0, st.sel + (up ? -1 : 1)));
+      break;
+
+    case S.THEME: {
+      const cnt = (st.sub === 1) ? 8 : 4;
+      st.sel += up ? -1 : 1;
+      if (st.sel < 0){ st.sub = (st.sub === 1) ? 2 : 1; st.sel = (st.sub === 1) ? 7 : 3; }
+      else if (st.sel >= cnt){ st.sub = (st.sub === 1) ? 2 : 1; st.sel = 0; }
+      break;
+    }
+
+    case S.REBOOT:
+    case S.FORMAT_FS:
+    case S.FORMAT_SETTINGS:
+      st.sel = Math.min(1, Math.max(0, st.sel + (up ? -1 : 1)));
+      break;
+
+    case S.BRIGHTNESS:
+      st.sel = Math.min(4, Math.max(0, st.sel + (up ? -1 : 1)));
+      break;
+
+    case S.QUICK_VIEW: {
+      const total = history.length;
+      if (up){
+        st.qvOffset += 5;
+        if (st.qvOffset >= total) st.qvOffset = 0;
+      } else {
+        st.qvOffset -= 5;
+        if (st.qvOffset < 0){
+          const last = Math.floor((total > 0 ? total - 1 : 0)/5)*5;
+          st.qvOffset = last;
+        }
+      }
+      break;
+    }
+
+    case S.QV_MODE:
+      st.sel = wrap(st.sel + (up ? -1 : 1), 0, 4);
+      break;
+
+    case S.TIME_SET:
+      st.sel = wrap(st.sel + (up ? -1 : 1), 0, 6);
+      break;
+
+    case S.TIME_SET_INPUT: {
+      const maxV = [99,12,31,23,59,59][st.sel];
+      st.timeDigits[st.sel] += up ? 1 : -1;
+      if (st.timeDigits[st.sel] > maxV) st.timeDigits[st.sel] = 0;
+      if (st.timeDigits[st.sel] < 0) st.timeDigits[st.sel] = maxV;
+      st.items[st.sel] = String(st.timeDigits[st.sel]).padStart(2,'0');
+      break;
+    }
+
+    case S.SYSTEM_STATUS:
+      break;
+  }
+  render();
+}
+
+function acknowledge(){
+  if (st.isMsg){ showLast(); return; }
+
+  switch (st.page){
+    case S.QV_MODE:
+      cfg.quick_view_mode = st.sel;
+      showMessage('模式', qvName(cfg.quick_view_mode));
+      return;
+
+    case S.SETTINGS: {
+      const p = st.sub;
+      if (p === -1){
+        if (st.sel === 0){ st.qvOffset = 0; st.page = S.QUICK_VIEW; }
+        else if (st.sel === 1){ st.page = S.ALARM_M; st.sel = 0; }
+        else if (st.sel === 2){ st.page = S.BRIGHTNESS; st.sel = 0; }
+        else if (st.sel === 3){ st.page = S.THEME; st.sub = 1; st.sel = 0; }
+        else if (st.sel === 4){
+          const now = new Date();
+          st.timeDigits = [now.getFullYear()%100, now.getMonth()+1, now.getDate(),
+                           now.getHours(), now.getMinutes(), now.getSeconds()];
+          st.page = S.TIME_SET; st.sel = 0;
+        }
+      } else if (p === -2){
+        if (st.sel === 0){ st.page = S.FREQ; st.sel = 0; }
+        else if (st.sel === 1){ st.page = S.ALAR_CONDT; st.sel = 0; }
+        else if (st.sel === 2){ st.page = S.ALAR_KILO_CONDT; st.sel = 0; }
+        else if (st.sel === 3){ st.lines = history.length; st.page = S.INDEX; st.sel = 0; }
+        else if (st.sel === 4){ st.page = S.SYSTEM_STATUS; }
+      } else if (p === -3){
+        if (st.sel === 0){ st.page = S.ABOUT; st.sub = 1; }
+        else if (st.sel === 1){ st.confirmTitle = '历史消息'; st.confirmBody = '删除所有历史消息?'; st.page = S.FORMAT_FS; st.sel = 0; }
+        else if (st.sel === 2){ st.page = S.FORMAT_SETTINGS; st.sel = 0; }
+      }
+      break;
+    }
+
+    case S.FREQ:
+      if (st.sel === 0){
+        cfg.freq_correction = !cfg.freq_correction;
+        showMessage('自动频率校正', cfg.freq_correction ? '已开启!' : '已关闭!');
+      } else {
+        const a = Math.abs(sys.ppm);
+        showMessage('当前偏移(ppm):',
+          (a <= 0.02) ? '等待读取消息频偏' :
+          (a <= 5)    ? '机车电台频偏正常' :
+          (a <= 10)   ? '机车电台频偏较大' :
+          (a <= 20)   ? '机车电台频偏严重' : '机车电台频偏极大');
+      }
+      return;
+
+    case S.ALARM_M:
+      if (st.sel <= 3){
+        cfg.anc_mode = st.sel;
+        showMessage('提示模式', '已设置为' + ['静音','声音','震动','声音+震动'][st.sel] + '!');
+      } else if (st.sel === 4){
+        cfg.longAnc = !cfg.longAnc;
+        showMessage('声音时长', cfg.longAnc ? '已设置为长!' : '已设置为短!');
+      } else if (st.sel === 5){
+        cfg.alert_std_mode = cfg.alert_std_mode ? 0 : 1;
+        showMessage('提示音', cfg.alert_std_mode ? '已切换为国标!' : '已切换为非标!');
+      } else {
+        st.page = S.SOUND_SET; st.sub = 2; st.sel = 0;
+      }
+      return;
+
+    case S.SOUND_SET:
+      if (st.sub === 2){
+        const k = SND_TONE_KEYS[st.sel];
+        cfg.snd_tones[k] = (cfg.snd_tones[k] + 1) & 0x03;
+        showMessage('音效设置', SND_SET_NAMES[st.sel] + '音调: ' + TONE_PRESET_NAMES[cfg.snd_tones[k]]);
+        playTonePreview(k, cfg.snd_tones[k]);
+      } else if (st.sel === 0){
+        cfg.snd_tones.alarmOther = (cfg.snd_tones.alarmOther + 1) & 0x03;
+        showMessage('音效设置', '其他提示音音调: ' + TONE_PRESET_NAMES[cfg.snd_tones.alarmOther]);
+        playTonePreview('alarmOther', cfg.snd_tones.alarmOther);
+      } else if (st.sel === 1){
+        cfg.boot_sound_en = !cfg.boot_sound_en;
+        showMessage('开机音效', cfg.boot_sound_en ? '已开启!' : '已关闭!');
+        if (cfg.boot_sound_en) playBootSound();
+      } else if (st.sel === 2){
+        cfg.boot_sound_type = (cfg.boot_sound_type + 1) % 3;
+        showMessage('开机音效风格', '已切换为' + ['标准','欢快','经典'][cfg.boot_sound_type] + '!');
+        playBootSound();
+      } else {
+        st.page = S.ALARM_M; st.sub = 1; st.sel = 6;   // 返回上级，停在“音效设置”入口
+      }
+      return;
+
+    case S.INDEX:
+      if (st.sel < 4){ st.page = S.INDEX_INPUT; }
+      else if (st.sel === 4){ exitMenuUI(); }
+      else { showLast(); }
+      break;
+
+    case S.INDEX_INPUT:
+      st.page = S.INDEX;
+      break;
+
+    case S.KILO_INDEX:
+      if (st.sel < 5){ st.page = S.KILO_INDEX_INPUT; }
+      else if (st.sel === 5){
+        showMessage('公里标设为:', (cfg.m_kmTenths/10).toFixed(1) + ' K');
+        return;
+      } else { showLast(); return; }
+
+    case S.KILO_INDEX_INPUT: {
+      st.page = S.KILO_INDEX;
+      const s = st.items.slice(0,5).join('');
+      cfg.m_kmTenths = Math.min(99999, parseInt(s, 10) || 0);
+      break;
+    }
+
+    case S.ALAR_CONDT: {
+      const keys = ['filt_none_msg','filt_usignTrain_msg','filt_old_msg','filt_LBJtime_msg',
+                    'filt_weakSig_msg','enable_powerSave','flit_lowpowerOFF'];
+      const msgs = ['忽略空消息','忽略未注册机辆','忽略旧版消息','忽略时间消息',
+                    '忽略弱信号消息','省电模式','低电量关机保护'];
+      if (st.sel < 7){
+        cfg[keys[st.sel]] = !cfg[keys[st.sel]];
+        showMessage('设置', msgs[st.sel] + (cfg[keys[st.sel]] ? '已启用' : '已禁用'));
+      }
+      return;
+    }
+
+    case S.ALAR_KILO_CONDT:
+      if (st.sel === 5){ st.page = S.KILO_INDEX; st.sel = 0; }
+      else if (st.sel === 6){
+        cfg.Kilo_limit_level = (cfg.Kilo_limit_level + 1) % KILO_LIMIT_ARRY.length;
+      } else {
+        const keys = ['enable_kilo_flit','enable_UP_flit','enable_DOWN_flit',
+                      'enable_departure_flit','enable_arrivaltime_disp'];
+        const msgs = ['公里标过滤功能','[上行] 列车报警','[下行] 列车报警',
+                      '屏蔽离去列车','到达显示时间'];
+        cfg[keys[st.sel]] = !cfg[keys[st.sel]];
+        showMessage('设置', msgs[st.sel] + (cfg[keys[st.sel]] ? '已启用' : '已禁用'));
+        return;
+      }
+      break;
+
+    case S.THEME:
+      if (st.sub === 1){
+        cfg.display_style = st.sel;
+        showMessage('界面主题', '已切换为' + THEMES[st.sel].name);
+        return;
+      } else {
+        if (st.sel === 0){
+          cfg.train_type_display = (cfg.train_type_display + 1) % 3;
+          showMessage('界面元素', '列车类型显示: ' + ['已关闭','旧版','新版'][cfg.train_type_display]);
+        } else if (st.sel === 1){
+          cfg.train_grade_display = !cfg.train_grade_display;
+          showMessage('界面元素', cfg.train_grade_display ? '车次等级标识已启用!' : '车次等级标识已禁用!');
+        } else if (st.sel === 2){
+          cfg.signal_tower_display = !cfg.signal_tower_display;
+          showMessage('界面元素', cfg.signal_tower_display ? '信号塔显示已启用!' : '信号塔显示已禁用!');
+        } else { showLast(); }
+      }
+      break;
+
+    case S.REBOOT:
+      if (st.sel === 0){ showMessage('重启设备', '正在重启...'); setTimeout(boot, 900); }
+      else { showLast(); }
+      return;
+
+    case S.FORMAT_FS:
+      if (st.sel === 0){ history = []; current = null; showMessage('历史消息', '已全部删除!'); }
+      else { showLast(); }
+      return;
+
+    case S.FORMAT_SETTINGS:
+      if (st.sel === 0){ showLast(); }
+      else { showMessage('重置设置', '正在重置个性化设置'); setTimeout(()=>{ location.reload(); }, 900); }
+      return;
+
+    case S.QUICK_VIEW:
+      st.page = S.QV_MODE; st.sel = cfg.quick_view_mode;
+      break;
+
+    case S.TIME_SET:
+      if (st.sel < 6){ st.page = S.TIME_SET_INPUT; }
+      else {
+        const d = st.timeDigits;
+        showMessage('时间已设置为:',
+          '20' + String(d[0]).padStart(2,'0') + '-' + String(d[1]).padStart(2,'0') + '-' +
+          String(d[2]).padStart(2,'0') + ' ' + String(d[3]).padStart(2,'0') + ':' +
+          String(d[4]).padStart(2,'0') + ':' + String(d[5]).padStart(2,'0'));
+        return;
+      }
+      break;
+
+    case S.TIME_SET_INPUT:
+      st.page = S.TIME_SET;
+      break;
+
+    case S.SYSTEM_STATUS:
+      showLast();
+      break;
+  }
+  render();
+}
+
+function qvName(m){
+  return ['序 车次 方向 线 里程','序号 车次 方向 机车','车次 方向 线路 里程',
+          '车次 方向 线路 机车','车次 方向 速度 里程'][m];
+}
+
+function pressKey(k){
+  uiFeedback('key');              // ANCshow()：每次按键均有反馈（受提示模式控制）
+  if (k === 'K1'){
+    if (!st.isMenu) openMenu();
+    else { uiFeedback('back'); closeMenu(); }        // 菜单内 K1：下行返回音
+  } else if (k === 'K2'){
+    if (!st.isMenu){ handleKey(true); return; }
+    handleKey(true);
+  } else if (k === 'K3'){
+    if (!st.isMenu){ handleKey(false); return; }
+    handleKey(false);
+  } else if (k === 'K4'){
+    if (!st.isMenu){
+      st.alwaysNew = true; current = null; reviewMode = false;
+      render();
+    } else { uiFeedback('confirm'); acknowledge(); }  // 菜单内 K4：确认音
+  }
+}
+
+document.querySelectorAll('.key').forEach(b => {
+  b.addEventListener('click', () => pressKey(b.dataset.key));
+});
+
+/* ---------- 13.5 真实外壳按键（电源键长按开关机） ---------- */
+/* 外壳按键的坐标热点在 .chassis-key 上，这里统一接管 K1~K4，并把电源键做成：
+ *   长按 ≥ 600 ms  → 开机 / 关机（关机时屏幕区域填充纯黑）
+ *   单击（短按）   → 无功能，只弹提示
+ *
+ * 为什么没有"单击切背光"：
+ *   实际设备的电源开关是纯硬件开关，只连接 EC190707 一路网络；
+ *   固件侧没有电源键输入（main.cpp 的 handleButtonInput() 只读 BUTTON_PIN，
+ *   对应 K1~K4，按下时唤醒背光），因此"电源键单击切背光"在真机上并不存在。
+ *   模拟器早期实现过该交互，会让用户误以为真机也有，故予取消。
+ */
+const DEVICE = { powered: true };
+
+function screenEl(){
+  return document.querySelector('.chassis-screen');
+}
+/* 关机：屏幕区域填充纯黑 */
+function applyScreenState(){
+  const cs = screenEl();
+  if (!cs) return;
+  const canvas = cs.querySelector('canvas');
+  if (!DEVICE.powered){
+    // 关机：屏幕区域填充纯黑（canvas 隐藏 + 黑色遮罩）
+    cs.classList.add('powered-off');
+    cs.style.opacity = '1';
+    if (canvas) canvas.style.visibility = 'hidden';
+  } else {
+    cs.classList.remove('powered-off');
+    if (canvas) canvas.style.visibility = 'visible';
+  }
+  const cap = document.getElementById('meta-mode');
+  if (cap){
+    // 关机：明确标注；开机：立即恢复当前页面标签（boot() 里的 render() 会在 900ms 后再刷一次）
+    cap.textContent = DEVICE.powered
+      ? (MODE_LABEL[st.page] || '待机监听')
+      : '已关机';
+  }
+}
+function powerOn(){
+  DEVICE.powered = true;
+  boot();                 // 先跑开机流程：同步把 st.page 置为待机监听
+  applyScreenState();     // 再恢复屏幕显示并刷新画面标签
+  toast('已开机');
+}
+function powerOff(){
+  DEVICE.powered = false;
+  applyScreenState();
+  toast('已关机（长按电源键可再次开机）');
+}
+
+/* 电源键：仅长按开关机。短按无实际功能，只给提示，避免用户以为按键失灵。 */
+const HOLD_MS = 600;
+document.querySelectorAll('.chassis-key[data-key="PWR"]').forEach(b => {
+  let holdTimer = null, held = false;
+  const startHold = e => {
+    held = false;
+    e.preventDefault();
+    holdTimer = setTimeout(() => { held = true; holdTimer = null; }, HOLD_MS);
+  };
+  const endHold = () => {
+    if (holdTimer){ clearTimeout(holdTimer); holdTimer = null; }
+    if (held){                       // 已判定为长按 → 开关机
+      held = false;
+      if (DEVICE.powered) powerOff(); else powerOn();
+    } else {
+      // 短按无功能：真机电源开关只连 EC190707，没有背光切换
+      toast('电源键需长按 ≥ 0.6 秒开机 / 关机');
+    }
+  };
+  b.addEventListener('pointerdown', startHold);
+  b.addEventListener('pointerup', endHold);
+  b.addEventListener('pointerleave', () => { if (holdTimer){ clearTimeout(holdTimer); holdTimer = null; } });
+  b.addEventListener('pointercancel', () => { if (holdTimer){ clearTimeout(holdTimer); holdTimer = null; } });
+});
+
+/* K1~K4 外壳按键 */
+document.querySelectorAll('.chassis-key[data-key^="K"]').forEach(b => {
+  b.addEventListener('click', () => {
+    if (!DEVICE.powered){ toast('设备已关机，请长按电源键开机'); return; }
+    pressKey(b.dataset.key);
+  });
+});
+applyScreenState();
+
+document.addEventListener('keydown', e => {
+  if (/^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)) return;
+  const map = { '1':'K1','2':'K2','3':'K3','4':'K4','Escape':'K1','ArrowUp':'K2','ArrowDown':'K3','Enter':'K4' };
+  const k = map[e.key];
+  if (k){ e.preventDefault(); pressKey(k); }
+});
+
+/* ---------- 14. 右侧控制面板 ---------- */
+function buildToggles(){
+  const defs = [
+    ['提示模式', 'anc_mode', 'cycle', ANC_MODE_LONG],
+    ['声音时长(长)', 'longAnc', 'bool'],
+    ['提示音规范', 'alert_std_mode', 'cycle', ['非标', '国标']],
+    ['开机音效', 'boot_sound_en', 'bool'],
+    ['开机音效风格', 'boot_sound_type', 'cycle', ['标准', '欢快', '经典']],
+    ['主题', 'display_style', 'theme'],
+    ['列车类型显示', 'train_type_display', 'cycle', ['已关闭', '旧版', '新版']],
+    ['车次等级标识', 'train_grade_display', 'bool'],
+    ['信号塔显示', 'signal_tower_display', 'bool'],
+    ['过滤-空消息', 'filt_none_msg', 'bool'],
+    ['过滤-未注册机辆', 'filt_usignTrain_msg', 'bool'],
+    ['过滤-旧版预警', 'filt_old_msg', 'bool'],
+    ['过滤-LBJ时间', 'filt_LBJtime_msg', 'bool'],
+    ['过滤-弱信号', 'filt_weakSig_msg', 'bool'],
+    ['公里标过滤', 'enable_kilo_flit', 'bool'],
+    ['上行报警', 'enable_UP_flit', 'bool'],
+    ['下行报警', 'enable_DOWN_flit', 'bool'],
+    ['屏蔽离去列车', 'enable_departure_flit', 'bool'],
+    ['显示到达时间', 'enable_arrivaltime_disp', 'bool'],
+    ['自动频率校正', 'freq_correction', 'bool'],
+    ['低功耗模式', 'enable_powerSave', 'bool'],
+    ['低电关机保护', 'flit_lowpowerOFF', 'bool'],
+    ['屏幕反显', 'invert_display', 'bool'],
+    ['电池栏信息', 'BATINFO_level', 'cycle', BATINFO_NAMES],
+    ['背光时间(秒)', 'lcd_lighttime', 'cycle', LCD_LIGHTTIME_ARRY],
+    ['菜单超时(秒)', 'menu_timeout_idx', 'cycle', MENU_TIMEOUT_ARRY],
+    ['充电中', 'charging', 'sysbool'],
+    ['无 Wi-Fi(RX)', 'no_wifi', 'sysbool'],
+  ];
+  const box = document.getElementById('toggles');
+  box.innerHTML = '';
+  defs.forEach(([label, key, kind, arr]) => {
+    const row = document.createElement('div');
+    row.className = 'tg';
+    const l = document.createElement('span');
+    l.textContent = label;
+    const v = document.createElement('span');
+    v.className = 'v';
+    const sw = document.createElement('div');
+    sw.className = 'sw';
+
+    const refresh = () => {
+      if (kind === 'bool' || kind === 'sysbool'){
+        const on = (kind === 'sysbool') ? sys[key] : cfg[key];
+        sw.classList.toggle('on', !!on);
+        v.textContent = on ? '开' : '关';
+      } else if (kind === 'theme'){
+        v.textContent = THEMES[cfg[key]].name;
+        sw.classList.remove('sw'); // 主题用循环按钮
+        sw.textContent = '切换';
+        sw.style.width = 'auto';
+        sw.style.background = 'var(--panel-2)';
+        sw.style.color = 'var(--accent)';
+        sw.style.border = '1px solid var(--line)';
+        sw.style.borderRadius = '7px';
+        sw.style.padding = '3px 9px';
+        sw.style.fontSize = '.7rem';
+        sw.style.height = 'auto';
+      } else {
+        const idx = cfg[key];
+        v.textContent = String(arr[(kind === 'cycle') ? idx : idx]);
+        sw.textContent = '切换';
+        sw.style.width = 'auto';
+        sw.style.background = 'var(--panel-2)';
+        sw.style.color = 'var(--accent)';
+        sw.style.border = '1px solid var(--line)';
+        sw.style.borderRadius = '7px';
+        sw.style.padding = '3px 9px';
+        sw.style.fontSize = '.7rem';
+        sw.style.height = 'auto';
+      }
+    };
+
+    sw.addEventListener('click', () => {
+      if (kind === 'bool') cfg[key] = !cfg[key];
+      else if (kind === 'sysbool') sys[key] = !sys[key];
+      else if (kind === 'theme') cfg[key] = (cfg[key] + 1) % THEMES.length;
+      else {
+        const n = (kind === 'cycle') ? arr.length : arr.length;
+        cfg[key] = (cfg[key] + 1) % n;
+      }
+      refresh();
+      render();
+    });
+
+    refresh();
+    row.appendChild(l); row.appendChild(sw); row.appendChild(v);
+    box.appendChild(row);
+  });
+}
+buildToggles();
+
+/* 快捷跳转 */
+function applyJump(j){
+    st.isMsg = false;
+    switch (j){
+      case 'rx':      st.page = S.CLOSED;   st.isMenu = false; current = null; break;
+      case 'review':  st.page = S.CLOSED;   st.isMenu = false; st.alwaysNew = false;
+                      reviewMode = true;  current = history[history.length - 1]; break;
+      case 'lowbatt': st.page = S.CLOSED;   st.isMenu = false; st.alwaysNew = false;
+                      reviewMode = false; current = history[0]; sys.voltage = 3.42; sys.charging = false; sys.no_wifi = true; break;
+      case 'showold': st.page = S.CLOSED;   st.isMenu = false; st.alwaysNew = false; reviewMode = false;
+                      current = {line:3, type:0, cls:'--', train:'57003', dir:3, speed:'68', pos:'45.2',
+                                 route:'----', ltype:'HXD1D', loco:'23500063', time:'20:27'}; break;
+      case 'showtime': st.page = S.CLOSED;  st.isMenu = false; st.alwaysNew = false; reviewMode = false;
+                      current = {line:10, type:2, cls:'--', train:'-----', dir:-1, speed:'---', pos:'----.-',
+                                 route:'----', ltype:'', loco:'-----', time:'20:00'}; break;
+      case 'rxinfo':  st.page = S.RX_INFO;  st.isMenu = true;  st.sub = 1; break;
+      case 'menu1':   st.page = S.SETTINGS; st.isMenu = true;  st.sub = -1; st.sel = 0; break;
+      case 'menu2':   st.page = S.SETTINGS; st.isMenu = true;  st.sub = -2; st.sel = 0; break;
+      case 'menu3':   st.page = S.SETTINGS; st.isMenu = true;  st.sub = -3; st.sel = 0; break;
+      case 'qv':      st.qvOffset = 0; st.page = S.QUICK_VIEW; st.isMenu = true; break;
+      case 'qvmode':  st.page = S.QV_MODE; st.isMenu = true; st.sel = cfg.quick_view_mode; break;
+      case 'anc':     st.page = S.ALARM_M;  st.isMenu = true;  st.sel = 0; break;
+      case 'snd1':    st.page = S.SOUND_SET; st.isMenu = true; st.sub = 2; st.sel = 0; break;
+      case 'snd2':    st.page = S.SOUND_SET; st.isMenu = true; st.sub = 3; st.sel = 0; break;
+      case 'bri':     st.page = S.BRIGHTNESS; st.isMenu = true; st.sel = 0; break;
+      case 'theme1':  st.page = S.THEME; st.isMenu = true; st.sub = 1; st.sel = 0; break;
+      case 'theme2':  st.page = S.THEME; st.isMenu = true; st.sub = 2; st.sel = 0; break;
+      case 'time':    st.page = S.TIME_SET; st.isMenu = true; st.sel = 0; break;
+      case 'freq':    st.page = S.FREQ;     st.isMenu = true; st.sel = 0; break;
+      case 'cond':    st.page = S.ALAR_CONDT; st.isMenu = true; st.sel = 0; break;
+      case 'kilo':    st.page = S.ALAR_KILO_CONDT; st.isMenu = true; st.sel = 0; break;
+      case 'kiloindex': st.page = S.KILO_INDEX; st.isMenu = true; st.sel = 0; break;
+      case 'index':   st.page = S.INDEX;    st.isMenu = true; st.sel = 0; st.lines = history.length; break;
+      case 'status': st.page = S.SYSTEM_STATUS; st.isMenu = true; break;
+      case 'about1':  st.page = S.ABOUT;     st.isMenu = true; st.sub = 1; break;
+      case 'formatfs': st.confirmTitle='历史消息'; st.confirmBody='删除所有历史消息?'; st.page = S.FORMAT_FS; st.isMenu = true; st.sel = 0; break;
+      case 'formatset': st.page = S.FORMAT_SETTINGS; st.isMenu = true; st.sel = 0; break;
+      case 'msg':
+        st.page = S.SETTINGS; st.isMenu = true; st.sub = -1; st.sel = 1;
+        render();
+        showMessage('提示模式', '已设置为联动!');
+        return;
+    }
+    render();
+}
+document.querySelectorAll('[data-jump]').forEach(b => {
+  b.addEventListener('click', () => applyJump(b.dataset.jump));
+});
+
+/* 自定义消息发送 */
+function sendCustomMsg(){
+  const d = {
+    line: history.length + 1,
+    type: parseInt(document.getElementById('m-type').value, 10),
+    cls:  document.getElementById('m-cls').value || '--',
+    train:document.getElementById('m-train').value || '-----',
+    dir:  parseInt(document.getElementById('m-dir').value, 10),
+    speed:document.getElementById('m-speed').value || '---',
+    pos:  document.getElementById('m-pos').value || '----.-',
+    route:document.getElementById('m-route').value || '----',
+    ltype:document.getElementById('m-ltype').value || '',
+    loco: document.getElementById('m-loco').value || '-----',
+  };
+  const now = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  d.time = pad(now.getHours()) + ':' + pad(now.getMinutes());
+  rx.rssi = parseFloat(document.getElementById('m-rssi').value) || -78.4;
+  const h = history.find(x => x.line === d.line);
+  if (!h) history.push(d); else Object.assign(h, d);
+  current = d;
+  st.alwaysNew = false;
+  st.isMenu = false;
+  st.page = S.CLOSED;
+  render();
+  broadcastFeedback(d.dir);        // 来车预警播报：按方向/提示模式/提示长短/提示音规范
+  toast('已收到一条新消息，屏幕已刷新');
+}
+document.getElementById('btn-send').addEventListener('click', sendCustomMsg);
+
+document.getElementById('btn-back2rx').addEventListener('click', () => {
+  st.alwaysNew = true; current = null; reviewMode = false; st.isMenu = false; st.page = S.CLOSED;
+  render();
+});
+
+/* 导出 JPG */
+function downloadCanvas(source, filename){
+  const a = document.createElement('a');
+  a.href = source.toDataURL('image/jpeg', 0.94);
+  a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+document.getElementById('btn-jpg').addEventListener('click', () => {
+  downloadCanvas(cv, 'DX-20S_屏幕_' + (MODE_LABEL[st.page] || '画面') + '.jpg');
+  toast('屏幕画面已导出为 JPG');
+});
+
+document.getElementById('btn-jpg-full').addEventListener('click', () => {
+  // 用离屏画布合成：底色 + 屏幕位图，得到完整的设备渲染图
+  const src = cv;
+  const margin = 40 * SCALE / 2;
+  const oc = document.createElement('canvas');
+  oc.width  = src.width  + margin*2;
+  oc.height = src.height + margin*2;
+  const o = oc.getContext('2d');
+  const g = o.createLinearGradient(0,0,oc.width,oc.height);
+  g.addColorStop(0,'#2a2e37'); g.addColorStop(1,'#14161c');
+  o.fillStyle = g; o.fillRect(0,0,oc.width,oc.height);
+  o.fillStyle = '#0b0c10';
+  o.fillRect(margin-8, margin-8, src.width+16, src.height+16);
+  o.drawImage(src, margin, margin);
+  o.fillStyle = '#e6e9ef';
+  o.font = 'bold ' + (16*SCALE/2) + 'px ' + FONT_FAMILY;
+  o.textAlign = 'left';
+  o.fillText('DX-20S 便携防护预警终端 · ' + (MODE_LABEL[st.page] || ''), margin, margin + src.height + 34*SCALE/2);
+  downloadCanvas(oc, 'DX-20S_整机_' + (MODE_LABEL[st.page] || '画面') + '.jpg');
+  toast('整机渲染图已导出为 JPG');
+});
+
+function toast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(el._t);
+  el._t = setTimeout(()=>el.classList.remove('show'), 2000);
+}
+
+/* ---------- 14.5 声音面板 ---------- */
+(function buildSoundPanel(){
+  const sw = document.getElementById('sw-sound');
+  const v  = document.getElementById('v-sound');
+  const refresh = () => {
+    sw.classList.toggle('on', snd.on);
+    v.textContent = snd.on ? '开' : '关';
+  };
+  sw.addEventListener('click', () => {
+    snd.on = !snd.on;
+    if (!snd.on) stopSound();
+    refresh();
+    toast(snd.on ? '网页声音已开启' : '网页声音已关闭');
+  });
+  refresh();
+
+  const defs = [
+    ['按键音',   () => playMelody(MELODIES.key)],
+    ['确认音',   () => playMelody(MELODIES.confirm)],
+    ['取消音',   () => playMelody(MELODIES.cancel)],
+    ['返回音',   () => playMelody(MELODIES.back)],
+    ['开机音',   () => playBootSound()],
+    ['故障提示音', () => playMelody(MELODIES.error)],
+    ['上行来车', () => playMelody(MELODIES.alarmUp)],
+    ['下行来车', () => playMelody(MELODIES.alarmDown)],
+    ['其他提示', () => playMelody(MELODIES.alarmOther)],
+    ['国标·上行', () => playMelody([[ALARM_FREQ,1000,300],[ALARM_FREQ,1000,300],[ALARM_FREQ,1000,300],[ALARM_FREQ,1000,0]])],
+    ['国标·下行', () => playMelody([[ALARM_FREQ,300,300],[ALARM_FREQ,1000,300],[ALARM_FREQ,300,300],[ALARM_FREQ,1000,300],[ALARM_FREQ,300,300],[ALARM_FREQ,1000,300],[ALARM_FREQ,300,300],[ALARM_FREQ,1000,0]])],
+    ['国标·其他', () => playMelody([[ALARM_FREQ,300,200],[ALARM_FREQ,300,200],[ALARM_FREQ,300,0]])],
+  ];
+  const box = document.getElementById('snd-btns');
+  defs.forEach(([label, fn]) => {
+    const b = document.createElement('button');
+    b.className = 'sbtn';
+    b.textContent = '▶ ' + label;
+    b.addEventListener('click', () => { audioCtx(); fn(); });
+    box.appendChild(b);
+  });
+
+  // 音调预设（对应菜单：音效设置；src/alert.cpp snd_tone_cfg 每类 2bit）
+  const toneDefs = [
+    ['按键音', 'key'], ['确认音', 'confirm'], ['取消音', 'cancel'], ['返回音', 'back'],
+    ['错误音', 'error'], ['上行预警', 'alarmUp'], ['下行预警', 'alarmDown'], ['其他提示音', 'alarmOther'],
+  ];
+  const tbox = document.getElementById('tone-btns');
+  toneDefs.forEach(([label, k]) => {
+    const b = document.createElement('button');
+    b.className = 'sbtn';
+    const upd = () => { b.textContent = label + ' [' + TONE_PRESET_NAMES[cfg.snd_tones[k]] + ']'; };
+    b.addEventListener('click', () => {
+      audioCtx();
+      cfg.snd_tones[k] = (cfg.snd_tones[k] + 1) & 0x03;
+      upd();
+      playTonePreview(k, cfg.snd_tones[k]);
+    });
+    upd();
+    tbox.appendChild(b);
+  });
+})();
+
+/* ---------- 14.6 导出全部页面 ---------- */
+const EXPORT_PAGES = [
+  ['rx',        '待机监听'],
+  ['show',      '消息显示_新版'],
+  ['showold',   '消息显示_旧版'],
+  ['showtime',  '消息显示_时间'],
+  ['review',    '回看模式'],
+  ['lowbatt',   '低电量提示'],
+  ['rxinfo',    '条目详细信息'],
+  ['menu1',     '功能菜单_1-3'],
+  ['menu2',     '功能菜单_2-3'],
+  ['menu3',     '功能菜单_3-3'],
+  ['qv',        '历史消息快捷查看'],
+  ['qvmode',    '快捷查看_显示模式'],
+  ['anc',       '提示模式设置'],
+  ['snd1',      '音效设置_1-2'],
+  ['snd2',      '音效设置_2-2'],
+  ['bri',       '屏幕与息屏时间'],
+  ['theme1',    '主题选择'],
+  ['theme2',    '显示元素'],
+  ['time',      '手动设置时间'],
+  ['freq',      '自动频率校正'],
+  ['cond',      '条件过滤与通用'],
+  ['kilo',      '公里标与告警条件'],
+  ['kiloindex', '设置本地公里标'],
+  ['index',     '历史条目索引'],
+  ['status',    '系统状态监控'],
+  ['about1',    '关于本机'],
+  ['formatfs',  '删除历史消息'],
+  ['formatset', '重置全部设置'],
+  ['msg',       '提示框'],
+];
+let exportingAll = false;
+function exportAllPages(){
+  if (exportingAll) return;
+  exportingAll = true;
+  let i = 0;
+  const step = () => {
+    if (i >= EXPORT_PAGES.length){
+      exportingAll = false;
+      toast('全部 ' + EXPORT_PAGES.length + ' 个页面已导出完成');
+      return;
+    }
+    const [jump, name] = EXPORT_PAGES[i++];
+    if (jump === 'show') sendCustomMsg(); else applyJump(jump);
+    setTimeout(() => {
+      downloadCanvas(cv, 'DX-20S_' + String(i).padStart(2, '0') + '_' + name + '.jpg');
+      setTimeout(step, 300);
+    }, 240);
+  };
+  step();
+}
+document.getElementById('btn-jpg-all').addEventListener('click', exportAllPages);
+
+/* ---------- 15. 启动 ---------- */
+/* ?shot=1 为纯净截图模式：只渲染屏幕画布（批量导出说明书配图用）。
+ * 必须同步设置：字体加载是异步的，若等到 await 之后再加类，
+ * 截图工具可能在类生效前就已经抓图。 */
+if (/[?&]shot=1/.test(location.search)) document.body.classList.add('shot');
+
+(async function init(){
+  try {
+    // 字体等待加超时兜底：部分环境无该字体时 fonts.ready 可能迟迟不 resolve
+    await Promise.race([
+      Promise.all([
+        document.fonts.load(FONT_HMOS + 'px "HarmonyOS Sans SC"'),
+        document.fonts.load(FONT_HMOS_28 + 'px "HarmonyOS Sans SC"')
+      ]).then(() => document.fonts.ready),
+      new Promise(r => setTimeout(r, 1500))
+    ]);
+  } catch(e){ /* 回退到系统字体 */ }
+  // 支持 #menu1 / #qv / #anc / #show 等 hash 直达页面（便于分享与截图）
+  // ?fastboot=1 跳过开机动画，直接进入待机界面（配合 still=1 用于自动截图）
+  const hash = location.hash.replace('#','');
+  if (/[?&]fastboot=1/.test(location.search)){
+    st.page = S.CLOSED; st.isMenu = false; st.alwaysNew = true;
+    render();
+  } else if (hash === 'show'){
+    sendCustomMsg();
+  } else if (hash && document.querySelector('[data-jump="' + hash + '"]')){
+    applyJump(hash);
+  } else {
+    boot();
+  }
+  setInterval(render, 10000);   // 时间刷新
+})();
+</script>
+<script src="DX20S_scene.js"></script>
+</body>
+</html>
